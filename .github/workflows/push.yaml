@@ -1,0 +1,26 @@
+name: Tag and Release on Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  publish-package:
+    uses: 'parkerstovall/workflows/.github/workflows/Publish_NPM.yaml@main'
+    with:
+      package_directory: '.'
+    secrets:
+      npm_token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  update-pac-man-repo:
+    if: ${{ needs.publish-package.outputs.created_tag == 'true' }}
+    uses: 'parkerstovall/workflows/.github/workflows/Push_PackageUpdate.yaml@main'
+    needs: publish-package
+    with:
+      package_directory: '.'
+      repo: 'parkerstovall/mustachio'
+      package_name: 'mustachio'
+    secrets:
+      repo_token: ${{ secrets.CROSS_REPO_TOKEN }}
