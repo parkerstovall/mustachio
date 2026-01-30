@@ -18,7 +18,7 @@ export abstract class GameContext {
   time: number = 300; // 5 minutes
   xOffset: number = 0;
 
-  readonly gravity: number = 0.6;
+  readonly gravity: number = 0.75;
   readonly gameArea: HTMLCanvasElement;
   readonly ui: HTMLCanvasElement;
   readonly bg: HTMLCanvasElement;
