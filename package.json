@@ -1,9 +1,11 @@
 {
   "name": "mustachio-game",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js"
@@ -13,7 +15,9 @@
     "dev": "vite",
     "lint": "eslint . --fix",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "patch": "npm version patch --no-git-tag-version",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
