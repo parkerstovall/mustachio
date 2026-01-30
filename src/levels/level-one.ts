@@ -54,7 +54,7 @@ function sectionOne(gameContext: GameContext) {
 
   // First barrier
   createBlockWall(gameContext, 0, 0, 1, 17, "wall");
-  createBlockWall(gameContext, 1, 5, 1, 11, "coin");
+  createBlockWall(gameContext, 1, 6, 1, 11, "coin");
 
   gameContext.addGameObject(
     new ItemBlock(gameContext, BLOCK_SIZE * 6, BLOCK_SIZE * 14, false, "coin"),
