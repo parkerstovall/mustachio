@@ -1,90 +1,63 @@
-import type { GameContext } from "../../shared/game-context";
-import { CaveWall } from "../../classes/game-objects/set-pieces/obstacles/blocks/cave-wall";
-import { BLOCK_SIZE } from "../../shared/constants";
-import { Coin } from "../../classes/game-objects/point-objects/items/coin";
-import { Pipe } from "../../classes/game-objects/set-pieces/obstacles/pipe";
-import { ItemBlock } from "../../classes/game-objects/set-pieces/obstacles/blocks/punchable-blockS/item-block";
-import { WarpPipe } from "../../classes/game-objects/set-pieces/obstacles/warp-pipe";
-import { levelOne } from "../level-one";
+import { BLOCK_SIZE, GAME_HEIGHT } from '../../constants'
+import type { GameScene } from '../../scenes/GameScene'
+import { CaveWall } from '../../objects/blocks/CaveWall'
+import { Coin } from '../../objects/items/Coin'
+import { Pipe } from '../../objects/set-pieces/Pipe'
+import { WarpPipe } from '../../objects/set-pieces/WarpPipe'
+import { ItemBlock } from '../../objects/blocks/ItemBlock'
+import { levelOne } from '../level-one'
 
-export function caveOne(
-  gameContext: GameContext,
-  previousLevels: string[] = [],
-) {
-  gameContext.clearLevel();
-  gameContext.setStatic(true);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function caveOne(scene: GameScene, _previousLevels: string[] = []) {
+  scene.setStatic(true)
 
   // Cave walls
-  gameContext.addGameObject(
-    new CaveWall(gameContext, {
-      x: 0,
-      y: 0,
-      width: BLOCK_SIZE * 4,
-      height: gameContext.gameArea.height,
-    }),
-  );
+  new CaveWall(scene, {
+    x: 0,
+    y: 0,
+    width: BLOCK_SIZE * 4,
+    height: GAME_HEIGHT,
+  })
 
-  gameContext.addGameObject(
-    new CaveWall(gameContext, {
-      x: BLOCK_SIZE * 28,
-      y: 0,
-      width: BLOCK_SIZE * 4,
-      height: gameContext.gameArea.height,
-    }),
-  );
+  new CaveWall(scene, {
+    x: BLOCK_SIZE * 28,
+    y: 0,
+    width: BLOCK_SIZE * 4,
+    height: GAME_HEIGHT,
+  })
 
-  gameContext.addGameObject(
-    new CaveWall(gameContext, {
-      x: BLOCK_SIZE * 4,
-      y: BLOCK_SIZE * 16,
-      width: BLOCK_SIZE * 24,
-      height: BLOCK_SIZE * 2,
-    }),
-  );
+  new CaveWall(scene, {
+    x: BLOCK_SIZE * 4,
+    y: BLOCK_SIZE * 16,
+    width: BLOCK_SIZE * 24,
+    height: BLOCK_SIZE * 2,
+  })
 
-  gameContext.addGameObject(
-    new CaveWall(gameContext, {
-      x: BLOCK_SIZE * 4,
-      y: 0,
-      width: BLOCK_SIZE * 24,
-      height: BLOCK_SIZE * 2,
-    }),
-  );
+  new CaveWall(scene, {
+    x: BLOCK_SIZE * 4,
+    y: 0,
+    width: BLOCK_SIZE * 24,
+    height: BLOCK_SIZE * 2,
+  })
 
-  gameContext.addGameObject(
-    new Pipe(gameContext, {
-      x: BLOCK_SIZE * 4,
-      y: BLOCK_SIZE * 2,
-    }),
-  );
+  new Pipe(scene, {
+    x: BLOCK_SIZE * 4,
+    y: BLOCK_SIZE * 2,
+  })
 
-  gameContext.addGameObject(
-    new WarpPipe(gameContext, {
-      x: BLOCK_SIZE * 26,
-      y: BLOCK_SIZE * 14,
-      setNewLevel: (gc) => levelOne(gc, [...previousLevels, "cave-one"]),
-    }),
-  );
+  new WarpPipe(scene, {
+    x: BLOCK_SIZE * 26,
+    y: BLOCK_SIZE * 14,
+    setNewLevel: (gc, prev) => levelOne(gc, [...(prev ?? []), 'cave-one']),
+  })
 
   for (let i = 7; i < 24; i += 2) {
     for (let j = 10; j < 16; j += 2) {
-      gameContext.addGameObject(
-        new Coin(gameContext, BLOCK_SIZE * i, BLOCK_SIZE * j),
-      );
+      new Coin(scene, BLOCK_SIZE * i, BLOCK_SIZE * j)
     }
   }
 
-  gameContext.addGameObject(
-    new ItemBlock(
-      gameContext,
-      BLOCK_SIZE * 27,
-      BLOCK_SIZE * 9,
-      true,
-      "fire-stache",
-    ),
-  );
+  new ItemBlock(scene, BLOCK_SIZE * 27, BLOCK_SIZE * 9, true, 'fire-stache')
 
-  gameContext.setPlayerLocation(BLOCK_SIZE * 4.5, BLOCK_SIZE * 5);
-
-  gameContext.startMainLoop();
+  scene.setPlayerLocation(BLOCK_SIZE * 4.5, BLOCK_SIZE * 5)
 }

@@ -1,77 +1,36 @@
-import { BLOCK_SIZE } from "../../shared/constants";
-import type { GameContext } from "../../shared/game-context";
-import { StacheStalker } from "../../classes/game-objects/point-objects/enemies/stache-stalker";
-import { Coin } from "../../classes/game-objects/point-objects/items/coin";
-import { FireBarBlock } from "../../classes/game-objects/set-pieces/obstacles/blocks/fire-bar-block";
-import { ItemBlock } from "../../classes/game-objects/set-pieces/obstacles/blocks/punchable-blockS/item-block";
-import { Wall } from "../../classes/game-objects/set-pieces/obstacles/blocks/wall";
-import { Floor } from "../../classes/game-objects/set-pieces/obstacles/floor";
-import { Brick } from "../../classes/game-objects/set-pieces/obstacles/blocks/punchable-blockS/brick";
+import { BLOCK_SIZE } from '../../constants'
+import type { GameScene } from '../../scenes/GameScene'
+import { StacheStalker } from '../../objects/enemies/StacheStalker'
+import { Coin } from '../../objects/items/Coin'
+import { FireBarBlock } from '../../objects/blocks/FireBarBlock'
+import { ItemBlock } from '../../objects/blocks/ItemBlock'
+import { Wall } from '../../objects/blocks/Wall'
+import { Floor } from '../../objects/set-pieces/Floor'
+import { Brick } from '../../objects/blocks/Brick'
 
-export function testLevelBlocksAndItems(gameContext: GameContext) {
-  gameContext.clearLevel();
+export function testLevelBlocksAndItems(scene: GameScene) {
+  new Floor(scene, {
+    x: 0,
+    y: BLOCK_SIZE * 17,
+    width: BLOCK_SIZE * 32,
+    height: BLOCK_SIZE,
+  })
 
-  gameContext.addGameObject(
-    new Floor(gameContext, {
-      x: 0,
-      y: BLOCK_SIZE * 17,
-      width: BLOCK_SIZE * 32,
-      height: BLOCK_SIZE,
-    }),
-  );
+  const touchingFloor = BLOCK_SIZE * 16
 
-  // The game canvas is 32 blocks wide
-  // and 18 blocks tall
+  new Wall(scene, BLOCK_SIZE * 14, touchingFloor, BLOCK_SIZE, BLOCK_SIZE)
+  new Wall(scene, BLOCK_SIZE * 22, touchingFloor, BLOCK_SIZE, BLOCK_SIZE)
 
-  const touchingFloor = BLOCK_SIZE * 16;
+  new StacheStalker(scene, BLOCK_SIZE * 16, BLOCK_SIZE * 15)
+  new Coin(scene, BLOCK_SIZE * 18, BLOCK_SIZE * 14)
+  new Brick(scene, BLOCK_SIZE * 11, BLOCK_SIZE * 14)
+  new ItemBlock(scene, BLOCK_SIZE * 12, BLOCK_SIZE * 14, false, 'coin')
 
-  gameContext.addGameObject(
-    new Wall(gameContext, BLOCK_SIZE * 14, touchingFloor),
-  );
+  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 14, false, 'stacheroom')
 
-  gameContext.addGameObject(
-    new Wall(gameContext, BLOCK_SIZE * 22, touchingFloor),
-  );
+  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 11, true, 'fire-stache')
 
-  gameContext.addGameObject(
-    new StacheStalker(gameContext, BLOCK_SIZE * 16, BLOCK_SIZE * 15),
-  );
+  new FireBarBlock(scene, BLOCK_SIZE * 18, BLOCK_SIZE * 12)
 
-  gameContext.addGameObject(
-    new Coin(gameContext, BLOCK_SIZE * 18, BLOCK_SIZE * 14),
-  );
-
-  gameContext.addGameObject(
-    new Brick(gameContext, BLOCK_SIZE * 11, BLOCK_SIZE * 14),
-  );
-
-  gameContext.addGameObject(
-    new ItemBlock(gameContext, BLOCK_SIZE * 12, BLOCK_SIZE * 14, false, "coin"),
-  );
-
-  gameContext.addGameObject(
-    new ItemBlock(
-      gameContext,
-      BLOCK_SIZE * 10,
-      BLOCK_SIZE * 14,
-      false,
-      "stacheroom",
-    ),
-  );
-
-  gameContext.addGameObject(
-    new ItemBlock(
-      gameContext,
-      BLOCK_SIZE * 10,
-      BLOCK_SIZE * 11,
-      true,
-      "fire-stache",
-    ),
-  );
-
-  gameContext.addGameObject(
-    new FireBarBlock(gameContext, BLOCK_SIZE * 18, BLOCK_SIZE * 12),
-  );
-
-  gameContext.startMainLoop();
+  scene.setupCamera(BLOCK_SIZE * 32)
 }

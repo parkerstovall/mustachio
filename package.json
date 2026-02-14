@@ -36,5 +36,18 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "peerDependencies": {
+    "phaser": "^3.90.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false,
+    "printWidth": 80
   }
 }
