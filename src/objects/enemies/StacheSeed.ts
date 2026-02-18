@@ -4,13 +4,9 @@ import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
 
 export class StacheSeed extends Enemy {
-  readonly pointValue = 100
   inPipe = false
-  private readonly reversed: boolean
+  readonly pointValue = 350
   private readonly waitTime = 2500
-  private movingUp = true
-  private seedParentY: number
-  private seedParentHeight: number
 
   constructor(
     scene: GameScene,
@@ -39,12 +35,11 @@ export class StacheSeed extends Enemy {
     const texKey = reversed ? 'stache-seed-reversed-1' : 'stache-seed-1'
     super(scene, x, y, texKey, true)
 
-    this.reversed = reversed
-    this.seedParentY = parent.y
-    this.seedParentHeight = parent.displayHeight
+    this.setDepth(-1)
+    this.scene.enemies.remove(this) // Remove from enemies group so it doesn't interact with other enemies
+    this.scene.stacheSeeds.add(this) // Add to stacheSeeds group for player collision
 
     this.setDisplaySize(width, height)
-    this.body.setSize(width, height)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 
@@ -52,64 +47,32 @@ export class StacheSeed extends Enemy {
       ? ['stache-seed-reversed-1', 'stache-seed-reversed-2']
       : ['stache-seed-1', 'stache-seed-2']
 
-    // Start movement
-    this.movingUp = !reversed
-    this.startMovement()
-  }
+    // Calculate movement parameters
+    const distance = height
+    const duration = (distance / STACHE_SEED_SPEED) * 1000
 
-  private startMovement() {
-    const speed = STACHE_SEED_SPEED
+    // Determine start and end positions based on orientation
+    const endY = reversed ? parent.y + parent.displayHeight : parent.y - height
 
-    if (this.movingUp) {
-      this.setVelocityY(-speed)
-    } else {
-      this.setVelocityY(speed)
-    }
-  }
-
-  preUpdate(time: number, delta: number) {
-    super.preUpdate(time, delta)
-    if (this.isDead) return
-
-    if (this.shouldChangeDirection()) {
-      this.setVelocityY(0)
-      this.movingUp = !this.movingUp
-
-      // Set inPipe based on position
-      if (this.reversed) {
-        this.inPipe = this.movingUp // going back up into pipe
-      } else {
-        this.inPipe = !this.movingUp // going back down into pipe
-      }
-
-      this.scene.time.delayedCall(this.waitTime, () => {
-        if (this.active) {
-          this.inPipe = false
-          this.startMovement()
-        }
-      })
-    }
-  }
-
-  private shouldChangeDirection(): boolean {
-    if (this.reversed) {
-      if (!this.movingUp) {
-        // Moving down (out of pipe)
-        return this.y > this.seedParentY + this.seedParentHeight
-      } else {
-        // Moving up (back into pipe)
-        return (
-          this.y + this.displayHeight < this.seedParentY + this.seedParentHeight
-        )
-      }
-    } else {
-      if (this.movingUp) {
-        // Moving up (out of pipe)
-        return this.y + this.displayHeight < this.seedParentY
-      } else {
-        // Moving down (back into pipe)
-        return this.y > this.seedParentY
-      }
-    }
+    // Create looping tween
+    scene.tweens.add({
+      targets: this,
+      y: endY,
+      duration: duration,
+      ease: 'Linear',
+      yoyo: true,
+      repeat: -1,
+      hold: this.waitTime,
+      repeatDelay: this.waitTime,
+      onStart: () => {
+        this.inPipe = false
+      },
+      onYoyo: () => {
+        this.inPipe = true
+      },
+      onRepeat: () => {
+        this.inPipe = false
+      },
+    })
   }
 }

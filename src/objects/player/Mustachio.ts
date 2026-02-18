@@ -32,7 +32,6 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0, 0)
     this.setDisplaySize(PLAYER_SIZE, PLAYER_SIZE)
-    this.body.setSize(PLAYER_SIZE, PLAYER_SIZE)
     this.body.setOffset(0, 0)
     this.setCollideWorldBounds(false)
     this.setDepth(10)
@@ -163,21 +162,23 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
 
     const targetW = big ? PLAYER_BIG_WIDTH : PLAYER_SIZE
     const targetH = big ? PLAYER_BIG_HEIGHT : PLAYER_SIZE
-    const sizeProxy = { w: this.displayWidth, h: this.displayHeight }
 
-    if (big) {
-      this.y -= targetH - PLAYER_SIZE
-    }
+    const velocityY = this.body.velocity.y
+    this.setVelocityY(0) // Stop vertical movement during size change
+
+    const newY = big
+      ? this.y - (targetH - this.displayHeight)
+      : this.y + (this.displayHeight - targetH)
 
     this.scene.tweens.add({
-      targets: sizeProxy,
-      w: targetW,
-      h: targetH,
+      targets: this,
+      displayWidth: targetW,
+      displayHeight: targetH,
+      y: newY,
       duration: 350,
-      onUpdate: () => {
-        this.setDisplaySize(sizeProxy.w, sizeProxy.h)
-        this.body.setSize(sizeProxy.w, sizeProxy.h)
-        this.body.setOffset(0, 0)
+
+      onComplete: () => {
+        this.setVelocityY(velocityY) // Preserve vertical velocity after tween
       },
     })
 
@@ -244,13 +245,11 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
       const newHeight = fullHeight / 2
       // Resize first (shrink), then move down to keep feet in place
       this.setDisplaySize(currentW, newHeight)
-      this.body.setSize(currentW, newHeight)
-      this.y += fullHeight - newHeight
+      this.y += fullHeight / 2
     } else {
       // Move up first, then resize (grow) to keep feet in place
-      this.y -= fullHeight - PLAYER_SIZE * 0.45
+      this.y -= fullHeight / 1.9
       this.setDisplaySize(currentW, fullHeight)
-      this.body.setSize(currentW, fullHeight)
     }
   }
 

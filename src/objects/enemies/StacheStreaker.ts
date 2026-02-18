@@ -16,7 +16,6 @@ export class StacheStreaker extends Enemy {
     super(scene, x, y, 'stache-streaker-1', false)
 
     this.setDisplaySize(BLOCK_SIZE * 2, BLOCK_SIZE * 1.5)
-    this.body.setSize(BLOCK_SIZE * 2, BLOCK_SIZE * 1.5)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 

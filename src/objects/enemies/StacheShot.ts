@@ -3,6 +3,7 @@ import {
   STACHE_SHOT_SPEED,
   GAME_WIDTH,
   GAME_HEIGHT,
+  ENEMY_SIZE,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
@@ -25,7 +26,7 @@ export class StacheShot extends Enemy {
     parentHeight: number,
     dir: number,
   ) {
-    const size = BLOCK_SIZE * 0.75
+    const size = ENEMY_SIZE
     const x = parentX + parentWidth / 2 - size / 2
     const y = parentY + parentHeight / 2 - size / 2
 
@@ -37,8 +38,10 @@ export class StacheShot extends Enemy {
 
     super(scene, x, y, texKey, false)
 
+    this.scene.enemies.remove(this) // Remove from enemies group so it doesn't interact with other enemies
+    this.scene.stacheShots.add(this) // Add to stacheShots group for player collision
+
     this.setDisplaySize(size, size)
-    this.body.setSize(size, size)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 

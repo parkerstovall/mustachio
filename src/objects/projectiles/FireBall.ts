@@ -27,7 +27,6 @@ export class FireBall extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5)
     this.setDisplaySize(16, 16)
-    this.body.setSize(16, 16)
     this.body.setAllowGravity(false)
 
     this.tracking = Math.random() < 0.25

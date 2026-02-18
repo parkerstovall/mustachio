@@ -15,12 +15,14 @@ export function createGameConfig(
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
+      width: GAME_WIDTH,
+      height: GAME_HEIGHT,
     },
     physics: {
       default: 'arcade',
       arcade: {
         gravity: { x: 0, y: GRAVITY },
-        debug: false,
+        debug: true,
       },
     },
     scene: [GameScene, BackgroundScene, UIScene],

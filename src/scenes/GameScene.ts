@@ -4,44 +4,20 @@ import {
   GAME_HEIGHT,
   PLAYER_WALK_SPEED,
   PLAYER_SPRINT_SPEED,
-  PLAYER_JUMP_VELOCITY,
+  ITEM_SIZE,
+  COIN_SIZE,
+  PLAYER_STOMP_BOUNCE_VELOCITY,
 } from '../constants'
 import { Mustachio } from '../objects/player/Mustachio'
 import type { Enemy } from '../objects/enemies/Enemy'
 import type { FireBar } from '../objects/projectiles/FireBar'
 
-// Asset imports
-import mustachioImg from '../assets/Mustachio.webp'
-import mustachioFacingLeft from '../assets/Mustachio_FacingLeft.webp'
-import mustachioFacingRight from '../assets/Mustachio_FacingRight.webp'
-import mustachioFire from '../assets/Mustachio_Fire.webp'
-import mustachioFacingLeftFire from '../assets/Mustachio_FacingLeft_Fire.webp'
-import mustachioFacingRightFire from '../assets/Mustachio_FacingRight_Fire.webp'
-import brickImg from '../assets/brick.webp'
-import cannonDown from '../assets/cannonDown.webp'
-import cannonLeft from '../assets/cannonLeft.webp'
-import cannonRight from '../assets/cannonRight.webp'
-import cannonUp from '../assets/cannonUp.webp'
-import fallingFloorImg from '../assets/fallingFloor.webp'
-import homesteadImg from '../assets/homestead.webp'
-import homesteadClosedImg from '../assets/homesteadClosed.webp'
-import itemBlockImg from '../assets/itemBlock.webp'
-import obstacleBrickImg from '../assets/obstacleBrick.webp'
-import punchedBlockImg from '../assets/punchedBlock.webp'
-import stacheSeed1Img from '../assets/stacheSeed1.webp'
-import stacheSeed2Img from '../assets/stacheSeed2.webp'
-import stacheSeedReversed1Img from '../assets/stacheSeedReversed1.webp'
-import stacheSeedReversed2Img from '../assets/stacheSeedReversed2.webp'
-import stacheShotDownImg from '../assets/stacheShotDown.webp'
-import stacheShotLeftImg from '../assets/stacheShotLeft.webp'
-import stacheShotRightImg from '../assets/stacheShotRight.webp'
-import stacheShotUpImg from '../assets/stacheShotUp.webp'
-import stacheSlinger1Img from '../assets/stacheSlinger1.webp'
-import stacheSlinger2Img from '../assets/stacheSlinger2.webp'
-import stacheStalkerImg from '../assets/stacheStalker.webp'
-import stacheStalkerReversedImg from '../assets/stacheStalkerReversed.webp'
-import stacheStreaker1Img from '../assets/stacheStreaker1.webp'
-import stacheStreaker2Img from '../assets/stacheStreaker2.webp'
+import type { ItemBlock } from '../objects/blocks/ItemBlock'
+import { loadImages } from './_sceneHelpers/load-assets'
+import { Item } from '../objects/items/Item'
+import { levelOne } from '../levels/level-one'
+import { StacheSeed } from '../objects/enemies/StacheSeed'
+import { FallingFloor } from '../objects/blocks/FallingFloor'
 
 export type LevelFunction = (
   scene: GameScene,
@@ -58,10 +34,13 @@ export class GameScene extends Phaser.Scene {
   // Physics groups
   platforms!: Phaser.Physics.Arcade.StaticGroup
   enemies!: Phaser.Physics.Arcade.Group
+  stacheShots!: Phaser.Physics.Arcade.Group
+  stacheSeeds!: Phaser.Physics.Arcade.Group
   items!: Phaser.Physics.Arcade.Group
   playerProjectiles!: Phaser.Physics.Arcade.Group
   enemyProjectiles!: Phaser.Physics.Arcade.Group
   breakables!: Phaser.Physics.Arcade.StaticGroup
+  fallingFloors!: Phaser.Physics.Arcade.Group
 
   // Player
   player!: Mustachio
@@ -86,7 +65,7 @@ export class GameScene extends Phaser.Scene {
   private levelFunc: LevelFunction | null = null
   previousLevels: string[] = []
   private fireBars: FireBar[] = []
-  private hiddenBlocks: import('../objects/blocks/ItemBlock').ItemBlock[] = []
+  private hiddenBlocks: ItemBlock[] = []
   private isPaused = false
 
   constructor() {
@@ -94,46 +73,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    // Player sprites
-    this.load.image('mustachio', mustachioImg)
-    this.load.image('mustachio-left', mustachioFacingLeft)
-    this.load.image('mustachio-right', mustachioFacingRight)
-    this.load.image('mustachio-fire', mustachioFire)
-    this.load.image('mustachio-left-fire', mustachioFacingLeftFire)
-    this.load.image('mustachio-right-fire', mustachioFacingRightFire)
-
-    // Block sprites
-    this.load.image('brick', brickImg)
-    this.load.image('obstacle-brick', obstacleBrickImg)
-    this.load.image('item-block', itemBlockImg)
-    this.load.image('punched-block', punchedBlockImg)
-    this.load.image('falling-floor', fallingFloorImg)
-
-    // Cannon sprites
-    this.load.image('cannon-up', cannonUp)
-    this.load.image('cannon-down', cannonDown)
-    this.load.image('cannon-left', cannonLeft)
-    this.load.image('cannon-right', cannonRight)
-
-    // Flag/homestead sprites
-    this.load.image('homestead', homesteadImg)
-    this.load.image('homestead-closed', homesteadClosedImg)
-
-    // Enemy sprites
-    this.load.image('stache-stalker', stacheStalkerImg)
-    this.load.image('stache-stalker-reversed', stacheStalkerReversedImg)
-    this.load.image('stache-seed-1', stacheSeed1Img)
-    this.load.image('stache-seed-2', stacheSeed2Img)
-    this.load.image('stache-seed-reversed-1', stacheSeedReversed1Img)
-    this.load.image('stache-seed-reversed-2', stacheSeedReversed2Img)
-    this.load.image('stache-shot-up', stacheShotUpImg)
-    this.load.image('stache-shot-down', stacheShotDownImg)
-    this.load.image('stache-shot-left', stacheShotLeftImg)
-    this.load.image('stache-shot-right', stacheShotRightImg)
-    this.load.image('stache-slinger-1', stacheSlinger1Img)
-    this.load.image('stache-slinger-2', stacheSlinger2Img)
-    this.load.image('stache-streaker-1', stacheStreaker1Img)
-    this.load.image('stache-streaker-2', stacheStreaker2Img)
+    loadImages(this)
   }
 
   create(data?: GameSceneData) {
@@ -150,10 +90,13 @@ export class GameScene extends Phaser.Scene {
     // Physics groups
     this.platforms = this.physics.add.staticGroup()
     this.enemies = this.physics.add.group({ allowGravity: false })
+    this.stacheShots = this.physics.add.group({ allowGravity: false })
+    this.stacheSeeds = this.physics.add.group({ allowGravity: false })
     this.items = this.physics.add.group()
     this.playerProjectiles = this.physics.add.group()
     this.enemyProjectiles = this.physics.add.group({ allowGravity: false })
     this.breakables = this.physics.add.staticGroup()
+    this.fallingFloors = this.physics.add.group({ allowGravity: false })
 
     // Player
     this.player = new Mustachio(this, BLOCK_SIZE * 4, BLOCK_SIZE * 13)
@@ -185,10 +128,14 @@ export class GameScene extends Phaser.Scene {
       this.isPaused = !this.isPaused
       if (this.isPaused) {
         this.physics.pause()
+        this.anims.pauseAll()
+        this.time.paused = true
         this.scene.pause('BackgroundScene')
         this.events.emit('pause')
       } else {
         this.physics.resume()
+        this.anims.resumeAll()
+        this.time.paused = false
         this.scene.resume('BackgroundScene')
         this.events.emit('resume')
       }
@@ -216,11 +163,7 @@ export class GameScene extends Phaser.Scene {
       this.levelFunc = level
       level(this, this.previousLevels)
     } else {
-      // Default: import level-one dynamically
-      import('../levels/level-one').then((mod) => {
-        this.levelFunc = mod.levelOne
-        mod.levelOne(this, this.previousLevels)
-      })
+      levelOne(this, this.previousLevels)
     }
 
     // Launch parallel scenes and set draw order: Background → Game → UI
@@ -300,11 +243,15 @@ export class GameScene extends Phaser.Scene {
 
     // Coin texture
     if (!this.textures.exists('coin')) {
-      const coinCanvas = this.textures.createCanvas('coin', 30, 30)!
+      const coinCanvas = this.textures.createCanvas(
+        'coin',
+        COIN_SIZE,
+        COIN_SIZE,
+      )!
       const cctx = coinCanvas.context
       cctx.fillStyle = 'gold'
       cctx.beginPath()
-      cctx.arc(15, 15, 14, 0, Math.PI * 2)
+      cctx.arc(COIN_SIZE / 2, COIN_SIZE / 2, COIN_SIZE / 2 - 1, 0, Math.PI * 2)
       cctx.fill()
       cctx.strokeStyle = 'black'
       cctx.lineWidth = 1
@@ -314,19 +261,27 @@ export class GameScene extends Phaser.Scene {
 
     // Stacheroom texture (blue rect)
     if (!this.textures.exists('stacheroom')) {
-      const srCanvas = this.textures.createCanvas('stacheroom', 20, 20)!
+      const srCanvas = this.textures.createCanvas(
+        'stacheroom',
+        ITEM_SIZE,
+        ITEM_SIZE,
+      )!
       const srctx = srCanvas.context
       srctx.fillStyle = 'blue'
-      srctx.fillRect(0, 0, 20, 20)
+      srctx.fillRect(0, 0, ITEM_SIZE, ITEM_SIZE)
       srCanvas.refresh()
     }
 
     // FireStache texture (red rect)
     if (!this.textures.exists('fire-stache')) {
-      const fsCanvas = this.textures.createCanvas('fire-stache', 20, 20)!
+      const fsCanvas = this.textures.createCanvas(
+        'fire-stache',
+        ITEM_SIZE,
+        ITEM_SIZE,
+      )!
       const fsctx = fsCanvas.context
       fsctx.fillStyle = 'red'
-      fsctx.fillRect(0, 0, 20, 20)
+      fsctx.fillRect(0, 0, ITEM_SIZE, ITEM_SIZE)
       fsCanvas.refresh()
     }
 
@@ -404,10 +359,39 @@ export class GameScene extends Phaser.Scene {
       this,
     )
 
-    // Player vs enemies
     this.physics.add.collider(
       this.player,
+      this.fallingFloors,
+      this
+        .onFallingFloorCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this,
+    )
+
+    // Player vs enemies
+    this.physics.add.overlap(
+      this.player,
       this.enemies,
+      this
+        .onPlayerEnemyCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this,
+    )
+
+    // Player vs stache seeds
+    this.physics.add.overlap(
+      this.player,
+      this.stacheSeeds,
+      this
+        .onStacheSeedCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this,
+    )
+
+    // Player vs StacheShots
+    this.physics.add.overlap(
+      this.player,
+      this.stacheShots,
       this
         .onPlayerEnemyCollision as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
       undefined,
@@ -437,6 +421,26 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.playerProjectiles,
       this.enemies,
+      this
+        .onProjectileHitEnemy as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this,
+    )
+
+    // Player projectiles vs stache shots
+    this.physics.add.overlap(
+      this.playerProjectiles,
+      this.stacheShots,
+      this
+        .onProjectileHitEnemy as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this,
+    )
+
+    // Player projectiles vs stache seeds
+    this.physics.add.overlap(
+      this.playerProjectiles,
+      this.stacheSeeds,
       this
         .onProjectileHitEnemy as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
       undefined,
@@ -494,6 +498,7 @@ export class GameScene extends Phaser.Scene {
           block.punch()
           this.player.setVelocityY(0)
           this.hiddenBlocks.splice(i, 1)
+          this.player.y = blockBottom
         }
       }
     }
@@ -585,40 +590,38 @@ export class GameScene extends Phaser.Scene {
         ;(block as unknown as { punch: () => void }).punch()
       }
     }
+  }
 
-    // Check if player landed on a FallingFloor
-    if (
-      playerBody.blocked.down &&
-      'startFall' in block &&
-      typeof (block as { startFall: () => void }).startFall === 'function'
-    ) {
-      ;(block as unknown as { startFall: () => void }).startFall()
-    }
+  private onStacheSeedCollision(
+    _player: Phaser.Types.Physics.Arcade.GameObjectWithBody,
+    stacheSeed: Phaser.Types.Physics.Arcade.GameObjectWithBody,
+  ) {
+    const enemy = stacheSeed as StacheSeed
+
+    if (enemy.isDead) return
+
+    if (enemy.inPipe) return
+
+    this.player.playerHit()
   }
 
   private onPlayerEnemyCollision(
     _player: Phaser.Types.Physics.Arcade.GameObjectWithBody,
     enemyObj: Phaser.Types.Physics.Arcade.GameObjectWithBody,
   ) {
-    const enemy = enemyObj as unknown as Enemy
+    const enemy = enemyObj as Enemy
     const playerBody = this.player.body as Phaser.Physics.Arcade.Body
 
     if (enemy.isDead) return
 
-    // Check if it's a StacheSeed that's in pipe
-    if ('inPipe' in enemy && (enemy as { inPipe: boolean }).inPipe) {
-      return
-    }
-
     // Stomp check: player moving down and above enemy
     if (
       playerBody.velocity.y > 0 &&
-      this.player.y + this.player.height <=
-        (enemyObj as Phaser.Physics.Arcade.Sprite).y + 10
+      this.player.y + this.player.height <= enemy.y + 10
     ) {
       enemy.enemyHit()
       // Bounce player up
-      this.player.setVelocityY(PLAYER_JUMP_VELOCITY * 0.5)
+      this.player.setVelocityY(PLAYER_STOMP_BOUNCE_VELOCITY) // Extra bounce for stomping
     } else {
       this.player.playerHit()
     }
@@ -628,13 +631,8 @@ export class GameScene extends Phaser.Scene {
     _player: Phaser.Types.Physics.Arcade.GameObjectWithBody,
     itemObj: Phaser.Types.Physics.Arcade.GameObjectWithBody,
   ) {
-    const item = itemObj as Phaser.Physics.Arcade.Sprite
-
-    if (
-      'collect' in item &&
-      typeof (item as { collect: () => void }).collect === 'function'
-    ) {
-      ;(item as unknown as { collect: () => void }).collect()
+    if (itemObj instanceof Item) {
+      itemObj.collect()
     }
   }
 
@@ -653,6 +651,16 @@ export class GameScene extends Phaser.Scene {
       enemy.enemyHit()
     }
     projectile.destroy()
+  }
+
+  private onFallingFloorCollision(
+    _player: Phaser.Types.Physics.Arcade.GameObjectWithBody,
+    floorObj: Phaser.Types.Physics.Arcade.GameObjectWithBody,
+  ) {
+    if (this.player.body.velocity.y < 0) return // Ignore if player is moving up through it
+
+    const floor = floorObj as FallingFloor
+    floor.startFall()
   }
 
   // Public helpers for level building
@@ -679,7 +687,7 @@ export class GameScene extends Phaser.Scene {
     this.fireBars.push(fireBar)
   }
 
-  registerHiddenBlock(block: import('../objects/blocks/ItemBlock').ItemBlock) {
+  registerHiddenBlock(block: ItemBlock) {
     this.hiddenBlocks.push(block)
   }
 

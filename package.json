@@ -13,6 +13,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev-old": "vite --config vite.config.old.ts",
     "lint": "eslint . --fix",
     "build": "tsc && vite build",
     "preview": "vite preview",

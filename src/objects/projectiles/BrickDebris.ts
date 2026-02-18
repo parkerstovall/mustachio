@@ -19,7 +19,6 @@ export class BrickDebris extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0.5, 0.5)
     this.setDisplaySize(16, 16)
-    this.body.setSize(16, 16)
     this.body.setAllowGravity(true)
 
     this.setVelocity(velocityX, velocityY)

@@ -14,7 +14,6 @@ export class StacheSlinger extends Enemy {
     super(scene, x, y, 'stache-slinger-1')
 
     this.setDisplaySize(BLOCK_SIZE * 1.5, BLOCK_SIZE * 2)
-    this.body.setSize(BLOCK_SIZE * 1.5, BLOCK_SIZE * 2)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 

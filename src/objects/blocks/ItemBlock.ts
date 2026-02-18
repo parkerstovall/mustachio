@@ -49,19 +49,15 @@ export class ItemBlock extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(BLOCK_SIZE, BLOCK_SIZE)
     this.refreshBody()
 
-    // Spawn item
-    const itemX = this.x + BLOCK_SIZE / 2
-    const itemY = this.y - BLOCK_SIZE
-
     switch (this.itemType) {
       case 'coin':
-        new Coin(this.scene, itemX, itemY, true)
+        new Coin(this.scene, this.x, this.y, true)
         break
       case 'stacheroom':
-        new Stacheroom(this.scene, itemX, itemY, true)
+        new Stacheroom(this.scene, this.x, this.y)
         break
       case 'fire-stache':
-        new FireStache(this.scene, itemX, itemY, true)
+        new FireStache(this.scene, this.x, this.y)
         break
     }
   }

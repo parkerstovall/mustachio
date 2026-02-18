@@ -54,7 +54,6 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     const oldHeight = this.displayHeight
     this.setDisplaySize(this.displayWidth, oldHeight / 2)
     this.y += oldHeight / 2
-    this.body.setSize(this.body.width, this.body.height / 2)
 
     this.scene.addScore(this.pointValue)
 

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE, GAME_WIDTH } from '../../constants'
+import { BLOCK_SIZE, GAME_WIDTH, STACHE_SHOT_TIMER } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheShot, Direction } from '../enemies/StacheShot'
 
@@ -26,7 +26,7 @@ export class StacheCannon extends Phaser.Physics.Arcade.Sprite {
     this.refreshBody()
 
     this.shotTimer = scene.time.addEvent({
-      delay: 6000,
+      delay: STACHE_SHOT_TIMER,
       loop: true,
       callback: () => {
         // Only fire if on screen
