@@ -57,7 +57,7 @@ export function caveOne(scene: GameScene, _previousLevels: string[] = []) {
     }
   }
 
-  new ItemBlock(scene, BLOCK_SIZE * 27, BLOCK_SIZE * 9, true, 'fire-stache')
+  new ItemBlock(scene, BLOCK_SIZE * 27, BLOCK_SIZE * 9, true, 'item')
 
   scene.setPlayerLocation(BLOCK_SIZE * 4.5, BLOCK_SIZE * 5)
 }

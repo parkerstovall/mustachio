@@ -1,7 +1,7 @@
 import {
   BLOCK_SIZE,
   ITEM_SIZE,
-  STACHEROOM_SPEED,
+  ITEM_SPEED,
   ITEM_RISE_DURATION,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
@@ -21,7 +21,7 @@ export class FireStache extends Item {
       duration: ITEM_RISE_DURATION,
       onComplete: () => {
         this.scene.items.add(this)
-        this.setVelocityX(STACHEROOM_SPEED)
+        this.setVelocityX(ITEM_SPEED)
       },
     })
   }

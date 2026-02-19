@@ -3,8 +3,8 @@ import {
   FIRE_BAR_ROTATION_SPEED,
   FIRE_BAR_WIDTH,
   FIRE_BAR_HEIGHT,
-  FIRE_BAR_DEPTH,
   FIRE_COLOR,
+  BELOW_PLAYER_DEPTH,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
@@ -21,7 +21,7 @@ export class FireBar extends Phaser.GameObjects.Graphics {
     this.anchorX = anchorX
     this.anchorY = anchorY
 
-    this.setDepth(FIRE_BAR_DEPTH)
+    this.setDepth(BELOW_PLAYER_DEPTH)
 
     // Register with scene for manual hit detection
     scene.registerFireBar(this)

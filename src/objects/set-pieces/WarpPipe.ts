@@ -12,9 +12,10 @@ export class WarpPipe extends Pipe {
   constructor(scene: GameScene, options: WarpPipeOptions) {
     super(scene, options)
     this.setNewLevel = options.setNewLevel
+    scene.platforms.remove(this)
 
     // Set up overlap detection for crouching player
-    scene.physics.add.overlap(scene.player, this, () => {
+    scene.physics.add.collider(scene.player, this, () => {
       scene.player.setWarpPipe(this)
     })
   }

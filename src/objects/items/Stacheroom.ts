@@ -1,14 +1,14 @@
 import {
   BLOCK_SIZE,
   ITEM_SIZE,
-  STACHEROOM_SPEED,
+  ITEM_SPEED,
   ITEM_RISE_DURATION,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Item } from './Item'
 
 export class Stacheroom extends Item {
-  readonly pointValue = 1000
+  readonly pointValue = 500
 
   constructor(scene: GameScene, x: number, y: number) {
     super(scene, x, y, 'stacheroom', ITEM_SIZE)
@@ -21,7 +21,7 @@ export class Stacheroom extends Item {
       duration: ITEM_RISE_DURATION,
       onComplete: () => {
         this.scene.items.add(this)
-        this.setVelocityX(STACHEROOM_SPEED)
+        this.setVelocityX(ITEM_SPEED)
       },
     })
   }

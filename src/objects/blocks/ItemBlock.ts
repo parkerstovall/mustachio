@@ -1,11 +1,11 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE } from '../../constants'
+import { ABOVE_PLAYER_DEPTH, BLOCK_SIZE } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Coin } from '../items/Coin'
 import { Stacheroom } from '../items/Stacheroom'
 import { FireStache } from '../items/FireStache'
 
-export type ItemType = 'coin' | 'stacheroom' | 'fire-stache'
+export type ItemType = 'coin' | 'item'
 
 export class ItemBlock extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene
@@ -31,6 +31,7 @@ export class ItemBlock extends Phaser.Physics.Arcade.Sprite {
     this.setOrigin(0, 0)
     this.setDisplaySize(BLOCK_SIZE, BLOCK_SIZE)
     this.refreshBody()
+    this.setDepth(ABOVE_PLAYER_DEPTH)
 
     if (hidden) {
       this.setVisible(false)
@@ -49,16 +50,12 @@ export class ItemBlock extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(BLOCK_SIZE, BLOCK_SIZE)
     this.refreshBody()
 
-    switch (this.itemType) {
-      case 'coin':
-        new Coin(this.scene, this.x, this.y, true)
-        break
-      case 'stacheroom':
-        new Stacheroom(this.scene, this.x, this.y)
-        break
-      case 'fire-stache':
-        new FireStache(this.scene, this.x, this.y)
-        break
+    if (this.itemType === 'coin') {
+      new Coin(this.scene, this.x, this.y, true)
+    } else if (this.scene.player.isBig) {
+      new FireStache(this.scene, this.x, this.y)
+    } else {
+      new Stacheroom(this.scene, this.x, this.y)
     }
   }
 }

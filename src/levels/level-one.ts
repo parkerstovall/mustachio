@@ -53,7 +53,7 @@ function sectionOne(scene: GameScene) {
   new ItemBlock(scene, BLOCK_SIZE * 6, BLOCK_SIZE * 14, false, 'coin')
   new Brick(scene, BLOCK_SIZE * 7, BLOCK_SIZE * 14)
   new ItemBlock(scene, BLOCK_SIZE * 8, BLOCK_SIZE * 14, true, 'coin')
-  new ItemBlock(scene, BLOCK_SIZE * 8, BLOCK_SIZE * 11, true, 'coin')
+  new ItemBlock(scene, BLOCK_SIZE * 8, BLOCK_SIZE * 12, false, 'item')
   new Brick(scene, BLOCK_SIZE * 9, BLOCK_SIZE * 14)
   new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 14, false, 'coin')
 
@@ -68,7 +68,7 @@ function sectionOne(scene: GameScene) {
 function sectionTwo(scene: GameScene) {
   new Wall(scene, BLOCK_SIZE * 46, BLOCK_SIZE * 16, BLOCK_SIZE, BLOCK_SIZE)
   new ItemBlock(scene, BLOCK_SIZE * 49, BLOCK_SIZE * 13, false, 'coin')
-  new ItemBlock(scene, BLOCK_SIZE * 49, BLOCK_SIZE * 9, true, 'stacheroom')
+  new ItemBlock(scene, BLOCK_SIZE * 49, BLOCK_SIZE * 9, true, 'item')
 
   createBlockSquare(scene, 53, 11, 6, 4, 'brick')
   createBlockWall(scene, 54, 12, 4, 2, 'coin')
@@ -138,7 +138,7 @@ function sectionFour(scene: GameScene) {
 function sectionFive(scene: GameScene) {
   createBlockWall(scene, 126, 14, 1, 3, 'wall')
 
-  new ItemBlock(scene, BLOCK_SIZE * 121, BLOCK_SIZE * 13, false, 'stacheroom')
+  new ItemBlock(scene, BLOCK_SIZE * 121, BLOCK_SIZE * 13, false, 'item')
 
   new FireCrossBlock(scene, BLOCK_SIZE * 126, BLOCK_SIZE * 13, [
     Direction.LEFT,

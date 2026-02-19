@@ -1,7 +1,7 @@
 import { BLOCK_SIZE } from './game'
 
-export const STACHE_BALL_SPEED = 250 // 5 * 50
-export const STACHE_BALL_BOUNCE_Y = -275 // -5.5 * 50
+export const STACHE_BALL_SPEED = 750 // 5 * 50
+export const STACHE_BALL_BOUNCE_Y = -500 // -5.5 * 50
 export const FIREBALL_SPEED = 100 // 2 * 50
 export const FIREBALL_TRACKING_SPEED = 62.5 // 1.25 * 50
 export const PROJECTILE_SIZE = 16
@@ -12,7 +12,6 @@ export const FIREBALL_LIFETIME = 5000
 export const FIRE_BAR_ROTATION_SPEED = 0.5
 export const FIRE_BAR_WIDTH = 10
 export const FIRE_BAR_HEIGHT = 250
-export const FIRE_BAR_DEPTH = 5
 export const FIRE_CROSS_GROW_SPEED = 37.5
 export const FIRE_CROSS_MAX_LENGTH = BLOCK_SIZE * 4
 export const FIRE_CROSS_MIN_LENGTH = BLOCK_SIZE * 0.5

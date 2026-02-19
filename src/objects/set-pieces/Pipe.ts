@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { PIPE_DEFAULT_SIZE } from '../../constants'
+import { ABOVE_PLAYER_DEPTH, PIPE_DEFAULT_SIZE } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheSeed } from '../enemies/StacheSeed'
 
@@ -25,6 +25,7 @@ export class Pipe extends Phaser.GameObjects.TileSprite {
     scene.add.existing(this)
     scene.physics.add.existing(this, true)
     scene.platforms.add(this)
+    this.setDepth(ABOVE_PLAYER_DEPTH)
 
     if (options.hasStacheSeed) {
       new StacheSeed(

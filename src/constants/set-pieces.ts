@@ -14,3 +14,6 @@ export const UI_FONT_SIZE_LARGE = '64px'
 export const UI_STROKE_THICKNESS = 4
 export const UI_MESSAGE_STROKE_THICKNESS = 6
 export const UI_TIMER_X_MULTIPLIER = 28
+
+export const ABOVE_PLAYER_DEPTH = 11
+export const BELOW_PLAYER_DEPTH = 9

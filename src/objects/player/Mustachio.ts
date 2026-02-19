@@ -59,6 +59,8 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     this.body.setOffset(0, 0)
     this.setCollideWorldBounds(false)
     this.setDepth(PLAYER_DEPTH)
+
+    this.changeFire(true)
   }
 
   updateTexture(dir: 'left' | 'right' | 'front') {

@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, ITEM_DEPTH } from '../../constants'
+import { BELOW_PLAYER_DEPTH, BLOCK_SIZE, ITEM_SPEED } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export abstract class Item extends Phaser.Physics.Arcade.Sprite {
@@ -18,7 +18,7 @@ export abstract class Item extends Phaser.Physics.Arcade.Sprite {
     y += (BLOCK_SIZE - size) / 2
 
     super(scene, x, y, texture)
-    this.setDepth(ITEM_DEPTH)
+    this.setDepth(BELOW_PLAYER_DEPTH)
     this.setOrigin(0, 0)
     this.setDisplaySize(size, size)
     scene.add.existing(this)
@@ -26,4 +26,14 @@ export abstract class Item extends Phaser.Physics.Arcade.Sprite {
   }
 
   abstract collect(): void
+
+  preUpdate(time: number, delta: number) {
+    super.preUpdate(time, delta)
+
+    if (this.body.blocked.left) {
+      this.setVelocityX(ITEM_SPEED)
+    } else if (this.body.blocked.right) {
+      this.setVelocityX(-ITEM_SPEED)
+    }
+  }
 }

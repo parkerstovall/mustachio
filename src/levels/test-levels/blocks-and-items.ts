@@ -26,9 +26,9 @@ export function testLevelBlocksAndItems(scene: GameScene) {
   new Brick(scene, BLOCK_SIZE * 11, BLOCK_SIZE * 14)
   new ItemBlock(scene, BLOCK_SIZE * 12, BLOCK_SIZE * 14, false, 'coin')
 
-  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 14, false, 'stacheroom')
+  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 14, false, 'item')
 
-  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 11, true, 'fire-stache')
+  new ItemBlock(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 11, true, 'item')
 
   new FireBarBlock(scene, BLOCK_SIZE * 18, BLOCK_SIZE * 12)
 

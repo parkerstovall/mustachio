@@ -512,6 +512,7 @@ export class GameScene extends Phaser.Scene {
 
     // Player projectiles vs platforms (bounce)
     this.physics.add.collider(this.playerProjectiles, this.platforms)
+    this.physics.add.collider(this.playerProjectiles, this.breakables)
   }
 
   update(_time: number, delta: number) {

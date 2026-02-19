@@ -4,7 +4,7 @@ import {
   STACHE_SEED_SPEED,
   STACHE_SEED_WAIT_TIME,
   STACHE_SEED_HEIGHT,
-  ITEM_DEPTH,
+  BELOW_PLAYER_DEPTH,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
@@ -40,7 +40,7 @@ export class StacheSeed extends Enemy {
     const texKey = reversed ? 'stache-seed-reversed-1' : 'stache-seed-1'
     super(scene, x, y, texKey, true)
 
-    this.setDepth(ITEM_DEPTH)
+    this.setDepth(BELOW_PLAYER_DEPTH)
     this.scene.enemies.remove(this) // Remove from enemies group so it doesn't interact with other enemies
     this.scene.stacheSeeds.add(this) // Add to stacheSeeds group for player collision
 
