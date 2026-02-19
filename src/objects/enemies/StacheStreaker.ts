@@ -1,4 +1,11 @@
-import { BLOCK_SIZE, STREAKER_SPEED } from '../../constants'
+import {
+  STREAKER_SPEED,
+  STREAKER_WIDTH,
+  STREAKER_HEIGHT,
+  STREAKER_PATROL_DISTANCE,
+  STREAKER_SHOT_COOLDOWN,
+  STREAKER_SHOT_DURATION,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
 import { Laser } from '../projectiles/Laser'
@@ -7,15 +14,13 @@ export class StacheStreaker extends Enemy {
   readonly pointValue = 1250
   private canMove = true
   private totalDistance = 0
-  private readonly timeBetweenShots = 3500
-  private readonly shotTime = 5000
   private shotTimer: Phaser.Time.TimerEvent | null = null
   acceptsCollision = false
 
   constructor(scene: GameScene, x: number, y: number) {
     super(scene, x, y, 'stache-streaker-1', false)
 
-    this.setDisplaySize(BLOCK_SIZE * 2, BLOCK_SIZE * 1.5)
+    this.setDisplaySize(STREAKER_WIDTH, STREAKER_HEIGHT)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 
@@ -31,7 +36,7 @@ export class StacheStreaker extends Enemy {
       }
     })
 
-    this.shotTimer = scene.time.delayedCall(this.timeBetweenShots, () => {
+    this.shotTimer = scene.time.delayedCall(STREAKER_SHOT_COOLDOWN, () => {
       this.fireLaser()
     })
   }
@@ -42,7 +47,7 @@ export class StacheStreaker extends Enemy {
     if (!this.isDead && this.canMove) {
       this.totalDistance += Math.abs(this.body.velocity.x) * (delta / 1000)
 
-      if (this.totalDistance >= BLOCK_SIZE * 5) {
+      if (this.totalDistance >= STREAKER_PATROL_DISTANCE) {
         this.setVelocityX(-this.body.velocity.x)
         this.totalDistance = 0
       }
@@ -58,20 +63,20 @@ export class StacheStreaker extends Enemy {
       this.y,
       this.displayWidth,
       this.displayHeight,
-      this.shotTime,
+      STREAKER_SHOT_DURATION,
     )
     this.canMove = false
     this.setVelocityX(0)
     this.nextImage()
 
-    this.shotTimer = this.scene.time.delayedCall(this.shotTime, () => {
+    this.shotTimer = this.scene.time.delayedCall(STREAKER_SHOT_DURATION, () => {
       if (this.isDead || !this.active) return
       this.canMove = true
       this.setVelocityX(STREAKER_SPEED)
       this.nextImage()
 
       this.shotTimer = this.scene.time.delayedCall(
-        this.timeBetweenShots,
+        STREAKER_SHOT_COOLDOWN,
         () => {
           this.fireLaser()
         },

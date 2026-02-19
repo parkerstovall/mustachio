@@ -1,5 +1,10 @@
 import Phaser from 'phaser'
-import { GAME_WIDTH, STACHE_BALL_BOUNCE_Y } from '../../constants'
+import {
+  GAME_WIDTH,
+  STACHE_BALL_BOUNCE_Y,
+  PROJECTILE_SIZE,
+  PROJECTILE_CULL_MARGIN,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export class StacheBall extends Phaser.Physics.Arcade.Sprite {
@@ -13,7 +18,7 @@ export class StacheBall extends Phaser.Physics.Arcade.Sprite {
     scene.playerProjectiles.add(this)
 
     this.setOrigin(0.5, 0.5)
-    this.setDisplaySize(16, 16)
+    this.setDisplaySize(PROJECTILE_SIZE, PROJECTILE_SIZE)
     this.body.setAllowGravity(true)
     this.body.setBounceY(1)
 
@@ -31,7 +36,10 @@ export class StacheBall extends Phaser.Physics.Arcade.Sprite {
 
     // Self-destruct off-screen
     const cam = this.scene.cameras.main
-    if (this.x < cam.scrollX - 100 || this.x > cam.scrollX + GAME_WIDTH + 100) {
+    if (
+      this.x < cam.scrollX - PROJECTILE_CULL_MARGIN ||
+      this.x > cam.scrollX + GAME_WIDTH + PROJECTILE_CULL_MARGIN
+    ) {
       this.destroy()
     }
   }

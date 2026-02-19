@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GAME_HEIGHT } from '../../constants'
+import { GAME_HEIGHT, PROJECTILE_SIZE } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export class BrickDebris extends Phaser.Physics.Arcade.Sprite {
@@ -18,7 +18,7 @@ export class BrickDebris extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this)
 
     this.setOrigin(0.5, 0.5)
-    this.setDisplaySize(16, 16)
+    this.setDisplaySize(PROJECTILE_SIZE, PROJECTILE_SIZE)
     this.body.setAllowGravity(true)
 
     this.setVelocity(velocityX, velocityY)

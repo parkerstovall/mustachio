@@ -7,6 +7,31 @@ import {
   ITEM_SIZE,
   COIN_SIZE,
   PLAYER_STOMP_BOUNCE_VELOCITY,
+  FALL_DEATH_MARGIN,
+  STOMP_DETECTION_MARGIN,
+  PIPE_STROKE_WIDTH,
+  COIN_STROKE_WIDTH,
+  COIN_ARC_PADDING,
+  FALLING_FLOOR_STROKE_WIDTH,
+  FLOOR_TOP_COLOR,
+  FLOOR_BOTTOM_COLOR,
+  PIPE_FILL_COLOR,
+  PIPE_STROKE_COLOR,
+  CAVE_WALL_COLOR,
+  COIN_FILL_COLOR,
+  COIN_STROKE_COLOR,
+  STACHEROOM_COLOR,
+  FIRE_STACHE_COLOR,
+  FALLING_FLOOR_FILL_COLOR,
+  FALLING_FLOOR_STROKE_COLOR,
+  STACHE_BALL_COLOR,
+  BRICK_DEBRIS_COLOR,
+  LASER_FILL_COLOR,
+  LASER_WIDTH,
+  LASER_TEXTURE_HEIGHT,
+  BALL_CANVAS_SIZE,
+  BALL_ARC_CENTER,
+  BALL_ARC_RADIUS,
 } from '../constants'
 import { Mustachio } from '../objects/player/Mustachio'
 import type { Enemy } from '../objects/enemies/Enemy'
@@ -205,9 +230,9 @@ export class GameScene extends Phaser.Scene {
         BLOCK_SIZE,
       )!
       const fctx = floorCanvas.context
-      fctx.fillStyle = 'YellowGreen'
+      fctx.fillStyle = FLOOR_TOP_COLOR
       fctx.fillRect(0, 0, BLOCK_SIZE, BLOCK_SIZE / 3)
-      fctx.fillStyle = 'SaddleBrown'
+      fctx.fillStyle = FLOOR_BOTTOM_COLOR
       fctx.fillRect(0, BLOCK_SIZE / 3, BLOCK_SIZE, BLOCK_SIZE - BLOCK_SIZE / 3)
       floorCanvas.refresh()
     }
@@ -220,10 +245,10 @@ export class GameScene extends Phaser.Scene {
         BLOCK_SIZE * 2,
       )!
       const pctx = pipeCanvas.context
-      pctx.fillStyle = 'green'
+      pctx.fillStyle = PIPE_FILL_COLOR
       pctx.fillRect(0, 0, BLOCK_SIZE * 2, BLOCK_SIZE * 2)
-      pctx.strokeStyle = 'darkgreen'
-      pctx.lineWidth = 2
+      pctx.strokeStyle = PIPE_STROKE_COLOR
+      pctx.lineWidth = PIPE_STROKE_WIDTH
       pctx.strokeRect(0, 0, BLOCK_SIZE * 2, BLOCK_SIZE * 2)
       pipeCanvas.refresh()
     }
@@ -236,7 +261,7 @@ export class GameScene extends Phaser.Scene {
         BLOCK_SIZE,
       )!
       const cctx = caveCanvas.context
-      cctx.fillStyle = 'DarkSlateGray'
+      cctx.fillStyle = CAVE_WALL_COLOR
       cctx.fillRect(0, 0, BLOCK_SIZE, BLOCK_SIZE)
       caveCanvas.refresh()
     }
@@ -249,12 +274,18 @@ export class GameScene extends Phaser.Scene {
         COIN_SIZE,
       )!
       const cctx = coinCanvas.context
-      cctx.fillStyle = 'gold'
+      cctx.fillStyle = COIN_FILL_COLOR
       cctx.beginPath()
-      cctx.arc(COIN_SIZE / 2, COIN_SIZE / 2, COIN_SIZE / 2 - 1, 0, Math.PI * 2)
+      cctx.arc(
+        COIN_SIZE / 2,
+        COIN_SIZE / 2,
+        COIN_SIZE / 2 - COIN_ARC_PADDING,
+        0,
+        Math.PI * 2,
+      )
       cctx.fill()
-      cctx.strokeStyle = 'black'
-      cctx.lineWidth = 1
+      cctx.strokeStyle = COIN_STROKE_COLOR
+      cctx.lineWidth = COIN_STROKE_WIDTH
       cctx.stroke()
       coinCanvas.refresh()
     }
@@ -267,7 +298,7 @@ export class GameScene extends Phaser.Scene {
         ITEM_SIZE,
       )!
       const srctx = srCanvas.context
-      srctx.fillStyle = 'blue'
+      srctx.fillStyle = STACHEROOM_COLOR
       srctx.fillRect(0, 0, ITEM_SIZE, ITEM_SIZE)
       srCanvas.refresh()
     }
@@ -280,7 +311,7 @@ export class GameScene extends Phaser.Scene {
         ITEM_SIZE,
       )!
       const fsctx = fsCanvas.context
-      fsctx.fillStyle = 'red'
+      fsctx.fillStyle = FIRE_STACHE_COLOR
       fsctx.fillRect(0, 0, ITEM_SIZE, ITEM_SIZE)
       fsCanvas.refresh()
     }
@@ -293,7 +324,7 @@ export class GameScene extends Phaser.Scene {
         BLOCK_SIZE,
       )!
       const ffctx = ffCanvas.context
-      ffctx.fillStyle = 'Bisque'
+      ffctx.fillStyle = FALLING_FLOOR_FILL_COLOR
       ffctx.fillRect(0, 0, BLOCK_SIZE, BLOCK_SIZE)
       ffctx.clearRect(
         BLOCK_SIZE / 3,
@@ -301,8 +332,8 @@ export class GameScene extends Phaser.Scene {
         BLOCK_SIZE / 3,
         BLOCK_SIZE / 3,
       )
-      ffctx.strokeStyle = 'black'
-      ffctx.lineWidth = 2
+      ffctx.strokeStyle = FALLING_FLOOR_STROKE_COLOR
+      ffctx.lineWidth = FALLING_FLOOR_STROKE_WIDTH
       ffctx.strokeRect(
         BLOCK_SIZE / 3,
         BLOCK_SIZE / 3,
@@ -315,32 +346,56 @@ export class GameScene extends Phaser.Scene {
 
     // StacheBall texture (red circle)
     if (!this.textures.exists('stache-ball')) {
-      const sbCanvas = this.textures.createCanvas('stache-ball', 16, 16)!
+      const sbCanvas = this.textures.createCanvas(
+        'stache-ball',
+        BALL_CANVAS_SIZE,
+        BALL_CANVAS_SIZE,
+      )!
       const sbctx = sbCanvas.context
-      sbctx.fillStyle = 'red'
+      sbctx.fillStyle = STACHE_BALL_COLOR
       sbctx.beginPath()
-      sbctx.arc(8, 8, 7, 0, Math.PI * 2)
+      sbctx.arc(
+        BALL_ARC_CENTER,
+        BALL_ARC_CENTER,
+        BALL_ARC_RADIUS,
+        0,
+        Math.PI * 2,
+      )
       sbctx.fill()
       sbCanvas.refresh()
     }
 
     // BrickDebris texture (brown circle)
     if (!this.textures.exists('brick-debris')) {
-      const bdCanvas = this.textures.createCanvas('brick-debris', 16, 16)!
+      const bdCanvas = this.textures.createCanvas(
+        'brick-debris',
+        BALL_CANVAS_SIZE,
+        BALL_CANVAS_SIZE,
+      )!
       const bdctx = bdCanvas.context
-      bdctx.fillStyle = 'brown'
+      bdctx.fillStyle = BRICK_DEBRIS_COLOR
       bdctx.beginPath()
-      bdctx.arc(8, 8, 7, 0, Math.PI * 2)
+      bdctx.arc(
+        BALL_ARC_CENTER,
+        BALL_ARC_CENTER,
+        BALL_ARC_RADIUS,
+        0,
+        Math.PI * 2,
+      )
       bdctx.fill()
       bdCanvas.refresh()
     }
 
     // Laser texture (blue rect)
     if (!this.textures.exists('laser')) {
-      const lCanvas = this.textures.createCanvas('laser', BLOCK_SIZE * 0.5, 4)!
+      const lCanvas = this.textures.createCanvas(
+        'laser',
+        LASER_WIDTH,
+        LASER_TEXTURE_HEIGHT,
+      )!
       const lctx = lCanvas.context
-      lctx.fillStyle = 'blue'
-      lctx.fillRect(0, 0, BLOCK_SIZE * 0.5, 4)
+      lctx.fillStyle = LASER_FILL_COLOR
+      lctx.fillRect(0, 0, LASER_WIDTH, LASER_TEXTURE_HEIGHT)
       lCanvas.refresh()
     }
   }
@@ -504,7 +559,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Fall death
-    if (this.player.y > GAME_HEIGHT + 100) {
+    if (this.player.y > GAME_HEIGHT + FALL_DEATH_MARGIN) {
       this.player.playerKill()
     }
 
@@ -617,7 +672,7 @@ export class GameScene extends Phaser.Scene {
     // Stomp check: player moving down and above enemy
     if (
       playerBody.velocity.y > 0 &&
-      this.player.y + this.player.height <= enemy.y + 10
+      this.player.y + this.player.height <= enemy.y + STOMP_DETECTION_MARGIN
     ) {
       enemy.enemyHit()
       // Bounce player up

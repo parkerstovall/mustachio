@@ -1,5 +1,10 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE } from '../../constants'
+import {
+  BLOCK_SIZE,
+  BRICK_SCORE,
+  BRICK_DEBRIS_SPEEDS_X,
+  BRICK_DEBRIS_SPEEDS_Y,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { BrickDebris } from '../projectiles/BrickDebris'
 
@@ -22,18 +27,16 @@ export class Brick extends Phaser.Physics.Arcade.Sprite {
     if (this.punched) return
     this.punched = true
 
-    this.scene.addScore(100)
+    this.scene.addScore(BRICK_SCORE)
 
     // Spawn 4 debris particles
-    const speedXs = [-50, -125, 50, 125]
-    const speedYs = [-100, -175, -100, -175]
     for (let i = 0; i < 4; i++) {
       new BrickDebris(
         this.scene,
         this.x + this.displayWidth / 2,
         this.y + this.displayHeight / 2,
-        speedXs[i],
-        speedYs[i],
+        BRICK_DEBRIS_SPEEDS_X[i],
+        BRICK_DEBRIS_SPEEDS_Y[i],
       )
     }
 

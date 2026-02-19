@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { ENEMY_ANIM_DELAY, ENEMY_DEATH_LINGER } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
@@ -27,7 +28,7 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     if (animate) {
       this.animTimer = scene.time.addEvent({
-        delay: 250,
+        delay: ENEMY_ANIM_DELAY,
         loop: true,
         callback: () => this.nextImage(),
       })
@@ -57,7 +58,7 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     this.scene.addScore(this.pointValue)
 
-    this.scene.time.delayedCall(500, () => {
+    this.scene.time.delayedCall(ENEMY_DEATH_LINGER, () => {
       this.destroy()
     })
   }

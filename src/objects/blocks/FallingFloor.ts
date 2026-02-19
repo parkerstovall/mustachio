@@ -1,5 +1,9 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE } from '../../constants'
+import {
+  BLOCK_SIZE,
+  FALLING_FLOOR_PRE_FALL_DELAY,
+  FALLING_FLOOR_FALL_DURATION,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export class FallingFloor extends Phaser.Physics.Arcade.Sprite {
@@ -23,9 +27,9 @@ export class FallingFloor extends Phaser.Physics.Arcade.Sprite {
     if (this.fallStarted) return
     this.fallStarted = true
 
-    this.scene.time.delayedCall(250, () => {
+    this.scene.time.delayedCall(FALLING_FLOOR_PRE_FALL_DELAY, () => {
       this.body.setAllowGravity(true)
-      this.scene.time.delayedCall(850, () => {
+      this.scene.time.delayedCall(FALLING_FLOOR_FALL_DURATION, () => {
         this.destroy()
       })
     })

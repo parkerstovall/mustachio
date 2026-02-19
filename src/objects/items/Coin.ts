@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, COIN_SIZE } from '../../constants'
+import { BLOCK_SIZE, COIN_SIZE, COIN_RISE_DURATION } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Item } from './Item'
 
@@ -15,7 +15,7 @@ export class Coin extends Item {
       scene.tweens.add({
         targets: this,
         y: y - BLOCK_SIZE,
-        duration: 400,
+        duration: COIN_RISE_DURATION,
         ease: 'Quad.easeOut',
         onComplete: () => {
           this.collect()

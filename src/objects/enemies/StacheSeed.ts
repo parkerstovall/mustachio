@@ -1,12 +1,17 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE, STACHE_SEED_SPEED } from '../../constants'
+import {
+  BLOCK_SIZE,
+  STACHE_SEED_SPEED,
+  STACHE_SEED_WAIT_TIME,
+  STACHE_SEED_HEIGHT,
+  ITEM_DEPTH,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
 
 export class StacheSeed extends Enemy {
   inPipe = false
   readonly pointValue = 350
-  private readonly waitTime = 2500
 
   constructor(
     scene: GameScene,
@@ -19,7 +24,7 @@ export class StacheSeed extends Enemy {
     reversed: boolean,
   ) {
     const width = BLOCK_SIZE
-    const height = BLOCK_SIZE * 3
+    const height = STACHE_SEED_HEIGHT
 
     let x: number
     let y: number
@@ -35,7 +40,7 @@ export class StacheSeed extends Enemy {
     const texKey = reversed ? 'stache-seed-reversed-1' : 'stache-seed-1'
     super(scene, x, y, texKey, true)
 
-    this.setDepth(-1)
+    this.setDepth(ITEM_DEPTH)
     this.scene.enemies.remove(this) // Remove from enemies group so it doesn't interact with other enemies
     this.scene.stacheSeeds.add(this) // Add to stacheSeeds group for player collision
 
@@ -62,8 +67,8 @@ export class StacheSeed extends Enemy {
       ease: 'Linear',
       yoyo: true,
       repeat: -1,
-      hold: this.waitTime,
-      repeatDelay: this.waitTime,
+      hold: STACHE_SEED_WAIT_TIME,
+      repeatDelay: STACHE_SEED_WAIT_TIME,
       onStart: () => {
         this.inPipe = false
       },

@@ -1,4 +1,9 @@
-import { BLOCK_SIZE, ITEM_SIZE, STACHEROOM_SPEED } from '../../constants'
+import {
+  BLOCK_SIZE,
+  ITEM_SIZE,
+  STACHEROOM_SPEED,
+  ITEM_RISE_DURATION,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Item } from './Item'
 
@@ -13,7 +18,7 @@ export class Stacheroom extends Item {
     this.scene.tweens.add({
       targets: this,
       y: this.y - BLOCK_SIZE / 2 - ITEM_SIZE / 2,
-      duration: 500,
+      duration: ITEM_RISE_DURATION,
       onComplete: () => {
         this.scene.items.add(this)
         this.setVelocityX(STACHEROOM_SPEED)

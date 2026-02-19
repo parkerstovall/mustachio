@@ -1,4 +1,4 @@
-import { BLOCK_SIZE } from '../../constants'
+import { BLOCK_SIZE, ITEM_DEPTH } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 
 export abstract class Item extends Phaser.Physics.Arcade.Sprite {
@@ -18,7 +18,7 @@ export abstract class Item extends Phaser.Physics.Arcade.Sprite {
     y += (BLOCK_SIZE - size) / 2
 
     super(scene, x, y, texture)
-    this.setDepth(-1)
+    this.setDepth(ITEM_DEPTH)
     this.setOrigin(0, 0)
     this.setDisplaySize(size, size)
     scene.add.existing(this)

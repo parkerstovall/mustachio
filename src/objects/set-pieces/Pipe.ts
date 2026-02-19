@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE } from '../../constants'
+import { PIPE_DEFAULT_SIZE } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheSeed } from '../enemies/StacheSeed'
 
@@ -16,8 +16,8 @@ export class Pipe extends Phaser.GameObjects.TileSprite {
   declare scene: GameScene
 
   constructor(scene: GameScene, options: PipeOptions) {
-    const w = options.width ?? BLOCK_SIZE * 2
-    const h = options.height ?? BLOCK_SIZE * 2
+    const w = options.width ?? PIPE_DEFAULT_SIZE
+    const h = options.height ?? PIPE_DEFAULT_SIZE
 
     super(scene, options.x, options.y, w, h, 'pipe')
 

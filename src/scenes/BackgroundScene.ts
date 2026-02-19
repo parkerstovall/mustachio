@@ -1,5 +1,14 @@
 import Phaser from 'phaser'
-import { GAME_WIDTH, BLOCK_SIZE } from '../constants'
+import {
+  GAME_WIDTH,
+  BLOCK_SIZE,
+  CLOUD_SPEED_MIN,
+  CLOUD_SPEED_RANGE,
+  CLOUD_Y_RANGE_MULTIPLIER,
+  CLOUD_COLOR,
+  CLOUD_ALPHA,
+  SKY_COLOR,
+} from '../constants'
 
 export class BackgroundScene extends Phaser.Scene {
   private clouds: { graphic: Phaser.GameObjects.Graphics; speed: number }[] = []
@@ -10,7 +19,7 @@ export class BackgroundScene extends Phaser.Scene {
 
   create() {
     // Sky background
-    this.cameras.main.setBackgroundColor('#87CEEB')
+    this.cameras.main.setBackgroundColor(SKY_COLOR)
 
     // Create clouds
     const cloudPositions = [
@@ -23,7 +32,7 @@ export class BackgroundScene extends Phaser.Scene {
 
     for (const pos of cloudPositions) {
       const g = this.add.graphics()
-      g.fillStyle(0xffffff, 0.8)
+      g.fillStyle(CLOUD_COLOR, CLOUD_ALPHA)
       g.fillEllipse(0, 0, BLOCK_SIZE * 2, BLOCK_SIZE)
       g.fillEllipse(
         BLOCK_SIZE * 0.8,
@@ -38,7 +47,10 @@ export class BackgroundScene extends Phaser.Scene {
         BLOCK_SIZE * 0.7,
       )
       g.setPosition(pos.x, pos.y)
-      this.clouds.push({ graphic: g, speed: 0.2 + Math.random() * 0.3 })
+      this.clouds.push({
+        graphic: g,
+        speed: CLOUD_SPEED_MIN + Math.random() * CLOUD_SPEED_RANGE,
+      })
     }
   }
 
@@ -47,7 +59,8 @@ export class BackgroundScene extends Phaser.Scene {
       cloud.graphic.x += cloud.speed
       if (cloud.graphic.x > GAME_WIDTH + BLOCK_SIZE * 2) {
         cloud.graphic.x = -BLOCK_SIZE * 3
-        cloud.graphic.y = BLOCK_SIZE + Math.random() * BLOCK_SIZE * 4
+        cloud.graphic.y =
+          BLOCK_SIZE + Math.random() * BLOCK_SIZE * CLOUD_Y_RANGE_MULTIPLIER
       }
     }
   }

@@ -1,5 +1,10 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE, GAME_WIDTH, STACHE_SHOT_TIMER } from '../../constants'
+import {
+  BLOCK_SIZE,
+  GAME_WIDTH,
+  STACHE_SHOT_TIMER,
+  CANNON_CULL_MARGIN,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheShot, Direction } from '../enemies/StacheShot'
 
@@ -32,8 +37,8 @@ export class StacheCannon extends Phaser.Physics.Arcade.Sprite {
         // Only fire if on screen
         const cam = scene.cameras.main
         if (
-          this.x > cam.scrollX - BLOCK_SIZE * 2 &&
-          this.x < cam.scrollX + GAME_WIDTH + BLOCK_SIZE * 2
+          this.x > cam.scrollX - CANNON_CULL_MARGIN &&
+          this.x < cam.scrollX + GAME_WIDTH + CANNON_CULL_MARGIN
         ) {
           new StacheShot(
             scene,

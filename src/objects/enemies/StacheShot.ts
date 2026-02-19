@@ -1,9 +1,9 @@
 import {
-  BLOCK_SIZE,
   STACHE_SHOT_SPEED,
   GAME_WIDTH,
   GAME_HEIGHT,
   ENEMY_SIZE,
+  STACHE_SHOT_CULL_MARGIN,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
@@ -57,10 +57,10 @@ export class StacheShot extends Enemy {
     // Self-destruct when off-screen
     const cam = this.scene.cameras.main
     if (
-      this.x < cam.scrollX - BLOCK_SIZE * 5 ||
-      this.x > cam.scrollX + GAME_WIDTH + BLOCK_SIZE * 5 ||
-      this.y < -BLOCK_SIZE * 5 ||
-      this.y > GAME_HEIGHT + BLOCK_SIZE * 5
+      this.x < cam.scrollX - STACHE_SHOT_CULL_MARGIN ||
+      this.x > cam.scrollX + GAME_WIDTH + STACHE_SHOT_CULL_MARGIN ||
+      this.y < -STACHE_SHOT_CULL_MARGIN ||
+      this.y > GAME_HEIGHT + STACHE_SHOT_CULL_MARGIN
     ) {
       this.destroy()
     }

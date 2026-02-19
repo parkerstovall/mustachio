@@ -4,6 +4,11 @@ import {
   FIREBALL_TRACKING_SPEED,
   GAME_WIDTH,
   GAME_HEIGHT,
+  PROJECTILE_SIZE,
+  PROJECTILE_CULL_MARGIN,
+  FIREBALL_SPAWN_Y_OFFSET,
+  FIREBALL_TRACKING_CHANCE,
+  FIREBALL_LIFETIME,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import type { Enemy } from '../enemies/Enemy'
@@ -17,7 +22,7 @@ export class FireBall extends Phaser.Physics.Arcade.Sprite {
     super(
       scene,
       parent.x + parent.displayWidth / 2,
-      parent.y + parent.displayHeight + 10,
+      parent.y + parent.displayHeight + FIREBALL_SPAWN_Y_OFFSET,
       'stache-ball',
     )
 
@@ -26,14 +31,14 @@ export class FireBall extends Phaser.Physics.Arcade.Sprite {
     scene.enemyProjectiles.add(this)
 
     this.setOrigin(0.5, 0.5)
-    this.setDisplaySize(16, 16)
+    this.setDisplaySize(PROJECTILE_SIZE, PROJECTILE_SIZE)
     this.body.setAllowGravity(false)
 
-    this.tracking = Math.random() < 0.25
+    this.tracking = Math.random() < FIREBALL_TRACKING_CHANCE
     this.setSpeed()
 
-    // Self-destruct after 5s
-    scene.time.delayedCall(5000, () => {
+    // Self-destruct after lifetime
+    scene.time.delayedCall(FIREBALL_LIFETIME, () => {
       if (this.active) this.destroy()
     })
   }
@@ -48,10 +53,10 @@ export class FireBall extends Phaser.Physics.Arcade.Sprite {
     // Destroy if off screen
     const cam = this.scene.cameras.main
     if (
-      this.x < cam.scrollX - 100 ||
-      this.x > cam.scrollX + GAME_WIDTH + 100 ||
-      this.y < -100 ||
-      this.y > GAME_HEIGHT + 100
+      this.x < cam.scrollX - PROJECTILE_CULL_MARGIN ||
+      this.x > cam.scrollX + GAME_WIDTH + PROJECTILE_CULL_MARGIN ||
+      this.y < -PROJECTILE_CULL_MARGIN ||
+      this.y > GAME_HEIGHT + PROJECTILE_CULL_MARGIN
     ) {
       this.destroy()
     }

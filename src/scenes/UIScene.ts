@@ -1,5 +1,18 @@
 import Phaser from 'phaser'
-import { BLOCK_SIZE, GAME_TIME } from '../constants'
+import {
+  BLOCK_SIZE,
+  GAME_TIME,
+  GAME_WIDTH,
+  GAME_HEIGHT,
+  TIMER_DELAY,
+  UI_FONT_SIZE,
+  UI_FONT_SIZE_LARGE,
+  UI_STROKE_THICKNESS,
+  UI_MESSAGE_STROKE_THICKNESS,
+  UI_TIMER_X_MULTIPLIER,
+  UI_TEXT_COLOR,
+  UI_STROKE_COLOR,
+} from '../constants'
 
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text
@@ -18,33 +31,33 @@ export class UIScene extends Phaser.Scene {
     this.timeLeft = GAME_TIME
 
     const style: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontSize: '32px',
-      color: '#ffffff',
+      fontSize: UI_FONT_SIZE,
+      color: UI_TEXT_COLOR,
       fontFamily: 'monospace',
-      stroke: '#000000',
-      strokeThickness: 4,
+      stroke: UI_STROKE_COLOR,
+      strokeThickness: UI_STROKE_THICKNESS,
     }
 
     this.scoreText = this.add.text(BLOCK_SIZE, BLOCK_SIZE, 'Score: 0', style)
     this.timerText = this.add.text(
-      BLOCK_SIZE * 28,
+      BLOCK_SIZE * UI_TIMER_X_MULTIPLIER,
       BLOCK_SIZE,
       `Time: ${this.timeLeft}`,
       style,
     )
     this.messageText = this.add
-      .text(960, 540, '', {
-        fontSize: '64px',
-        color: '#ffffff',
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2, '', {
+        fontSize: UI_FONT_SIZE_LARGE,
+        color: UI_TEXT_COLOR,
         fontFamily: 'monospace',
-        stroke: '#000000',
-        strokeThickness: 6,
+        stroke: UI_STROKE_COLOR,
+        strokeThickness: UI_MESSAGE_STROKE_THICKNESS,
         align: 'center',
       })
       .setOrigin(0.5)
 
     this.timerEvent = this.time.addEvent({
-      delay: 1000,
+      delay: TIMER_DELAY,
       loop: true,
       callback: this.timerTick,
       callbackScope: this,
@@ -85,7 +98,7 @@ export class UIScene extends Phaser.Scene {
         this.timerEvent.remove()
       }
       this.timerEvent = this.time.addEvent({
-        delay: 1000,
+        delay: TIMER_DELAY,
         loop: true,
         callback: this.timerTick,
         callbackScope: this,

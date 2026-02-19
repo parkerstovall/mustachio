@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GAME_WIDTH, GAME_HEIGHT, GRAVITY } from './constants'
+import { GAME_WIDTH, GAME_HEIGHT, GRAVITY, SKY_COLOR } from './constants'
 import { GameScene } from './scenes/GameScene'
 import { BackgroundScene } from './scenes/BackgroundScene'
 import { UIScene } from './scenes/UIScene'
@@ -26,6 +26,6 @@ export function createGameConfig(
       },
     },
     scene: [GameScene, BackgroundScene, UIScene],
-    backgroundColor: '#87CEEB',
+    backgroundColor: SKY_COLOR,
   }
 }

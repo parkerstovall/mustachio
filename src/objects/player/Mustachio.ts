@@ -5,6 +5,30 @@ import {
   PLAYER_BIG_HEIGHT,
   PLAYER_JUMP_VELOCITY,
   STACHE_BALL_SPEED,
+  PLAYER_DEPTH,
+  MAX_JUMPS,
+  PLAYER_FIRE_COOLDOWN,
+  PLAYER_BALL_OFFSET_LEFT,
+  PLAYER_BALL_OFFSET_RIGHT,
+  PLAYER_INVULNERABILITY_DURATION,
+  PLAYER_HIT_FLASH_ALPHA,
+  PLAYER_HIT_FLASH_DURATION,
+  PLAYER_HIT_FLASH_REPEAT,
+  PLAYER_DEAD_DEPTH,
+  PLAYER_DEATH_PAUSE,
+  PLAYER_DEATH_RISE,
+  PLAYER_DEATH_RISE_DURATION,
+  PLAYER_DEATH_FALL_TARGET,
+  PLAYER_DEATH_FALL_DURATION,
+  PLAYER_SIZE_CHANGE_DURATION,
+  PLAYER_POWERUP_FLASH_ALPHA,
+  PLAYER_POWERUP_FLASH_DURATION,
+  PLAYER_POWERUP_FLASH_REPEAT,
+  PLAYER_WIN_WALK_DURATION,
+  PLAYER_WIN_DELAY,
+  PLAYER_UNCROUCH_Y_DIVISOR,
+  WARP_PIPE_ENTRY_OVERLAP,
+  WARP_PIPE_ENTRY_DURATION,
 } from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheBall } from '../projectiles/StacheBall'
@@ -34,7 +58,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(PLAYER_SIZE, PLAYER_SIZE)
     this.body.setOffset(0, 0)
     this.setCollideWorldBounds(false)
-    this.setDepth(10)
+    this.setDepth(PLAYER_DEPTH)
   }
 
   updateTexture(dir: 'left' | 'right' | 'front') {
@@ -52,7 +76,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
   }
 
   jump() {
-    if (this.numJumps >= 2) return
+    if (this.numJumps >= MAX_JUMPS) return
     this.setVelocityY(PLAYER_JUMP_VELOCITY)
     this.numJumps++
   }
@@ -77,7 +101,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     if (!this.isFire || !this.canFireProjectile) return
 
     this.canFireProjectile = false
-    this.scene.time.delayedCall(250, () => {
+    this.scene.time.delayedCall(PLAYER_FIRE_COOLDOWN, () => {
       this.canFireProjectile = true
     })
 
@@ -85,8 +109,8 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
       this.facingDirection === 'left' ? -STACHE_BALL_SPEED : STACHE_BALL_SPEED
     const ballX =
       this.facingDirection === 'left'
-        ? this.x - 10
-        : this.x + this.body.width + 5
+        ? this.x - PLAYER_BALL_OFFSET_LEFT
+        : this.x + this.body.width + PLAYER_BALL_OFFSET_RIGHT
     const ballY = this.y + this.body.height / 2
 
     new StacheBall(this.scene, ballX, ballY, dirX)
@@ -106,17 +130,20 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Invulnerability period
-    this.hitTimer = this.scene.time.delayedCall(1000, () => {
-      this.hitTimer = null
-    })
+    this.hitTimer = this.scene.time.delayedCall(
+      PLAYER_INVULNERABILITY_DURATION,
+      () => {
+        this.hitTimer = null
+      },
+    )
 
     // Flash effect
     this.scene.tweens.add({
       targets: this,
-      alpha: 0.3,
-      duration: 100,
+      alpha: PLAYER_HIT_FLASH_ALPHA,
+      duration: PLAYER_HIT_FLASH_DURATION,
       yoyo: true,
-      repeat: 4,
+      repeat: PLAYER_HIT_FLASH_REPEAT,
     })
   }
 
@@ -131,21 +158,21 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     this.body.setAllowGravity(false)
     this.body.enable = false
     this.setVelocity(0, 0)
-    this.setDepth(100)
+    this.setDepth(PLAYER_DEAD_DEPTH)
 
     // Death animation: pause, then rise and fall via tween
-    this.scene.time.delayedCall(500, () => {
+    this.scene.time.delayedCall(PLAYER_DEATH_PAUSE, () => {
       this.scene.tweens.add({
         targets: this,
-        y: this.y - 300,
-        duration: 500,
+        y: this.y - PLAYER_DEATH_RISE,
+        duration: PLAYER_DEATH_RISE_DURATION,
         ease: 'Quad.easeOut',
         onComplete: () => {
           // Now fall off screen
           this.scene.tweens.add({
             targets: this,
-            y: this.scene.cameras.main.scrollY + 1200,
-            duration: 800,
+            y: this.scene.cameras.main.scrollY + PLAYER_DEATH_FALL_TARGET,
+            duration: PLAYER_DEATH_FALL_DURATION,
             ease: 'Quad.easeIn',
             onComplete: () => {
               this.scene.events.emit('playerDead')
@@ -175,7 +202,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
       displayWidth: targetW,
       displayHeight: targetH,
       y: newY,
-      duration: 350,
+      duration: PLAYER_SIZE_CHANGE_DURATION,
 
       onComplete: () => {
         this.setVelocityY(velocityY) // Preserve vertical velocity after tween
@@ -199,10 +226,10 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     if (fire) {
       this.scene.tweens.add({
         targets: this,
-        alpha: 0.5,
-        duration: 115,
+        alpha: PLAYER_POWERUP_FLASH_ALPHA,
+        duration: PLAYER_POWERUP_FLASH_DURATION,
         yoyo: true,
-        repeat: 3,
+        repeat: PLAYER_POWERUP_FLASH_REPEAT,
       })
     }
   }
@@ -220,11 +247,11 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     this.scene.tweens.add({
       targets: this,
       x: targetX,
-      duration: 2000,
+      duration: PLAYER_WIN_WALK_DURATION,
       onComplete: () => {
         this.setTexture('mustachio')
         this.setDisplaySize(PLAYER_SIZE, PLAYER_SIZE)
-        this.scene.time.delayedCall(1000, () => {
+        this.scene.time.delayedCall(PLAYER_WIN_DELAY, () => {
           if ('closeDoor' in flag) {
             ;(flag as unknown as { closeDoor: () => void }).closeDoor()
           }
@@ -248,7 +275,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
       this.y += fullHeight / 2
     } else {
       // Move up first, then resize (grow) to keep feet in place
-      this.y -= fullHeight / 1.9
+      this.y -= fullHeight / PLAYER_UNCROUCH_Y_DIVISOR
       this.setDisplaySize(currentW, fullHeight)
     }
   }
@@ -268,8 +295,8 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
 
     this.scene.tweens.add({
       targets: this,
-      y: pipe.y + 10,
-      duration: 500,
+      y: pipe.y + WARP_PIPE_ENTRY_OVERLAP,
+      duration: WARP_PIPE_ENTRY_DURATION,
       onComplete: () => {
         this.warpPipe = null
         this.ignoreUpdate = false

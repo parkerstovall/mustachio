@@ -1,4 +1,10 @@
-import { BLOCK_SIZE, SLINGER_SPEED } from '../../constants'
+import {
+  SLINGER_SPEED,
+  SLINGER_WIDTH,
+  SLINGER_HEIGHT,
+  SLINGER_PATROL_RANGE,
+  SLINGER_SHOT_INTERVAL,
+} from '../../constants'
 import type { GameScene } from '../../scenes/GameScene'
 import { Enemy } from './Enemy'
 import { FireBall } from '../projectiles/FireBall'
@@ -13,12 +19,12 @@ export class StacheSlinger extends Enemy {
   constructor(scene: GameScene, x: number, y: number) {
     super(scene, x, y, 'stache-slinger-1')
 
-    this.setDisplaySize(BLOCK_SIZE * 1.5, BLOCK_SIZE * 2)
+    this.setDisplaySize(SLINGER_WIDTH, SLINGER_HEIGHT)
     this.body.setOffset(0, 0)
     this.body.setAllowGravity(false)
 
-    this.maxX = x + BLOCK_SIZE * 4
-    this.minX = x - BLOCK_SIZE * 4
+    this.maxX = x + SLINGER_PATROL_RANGE
+    this.minX = x - SLINGER_PATROL_RANGE
 
     this.imageKeys = ['stache-slinger-1', 'stache-slinger-2']
     this.setVelocityX(SLINGER_SPEED)
@@ -28,7 +34,7 @@ export class StacheSlinger extends Enemy {
 
     // Fire on interval
     this.shotTimer = scene.time.addEvent({
-      delay: 5000,
+      delay: SLINGER_SHOT_INTERVAL,
       loop: true,
       callback: () => {
         if (!this.isDead && this.active) {
@@ -47,11 +53,11 @@ export class StacheSlinger extends Enemy {
       if (this.x > this.maxX) {
         this.setVelocityX(-SLINGER_SPEED)
         this.setTexture('stache-slinger-2')
-        this.setDisplaySize(BLOCK_SIZE * 1.5, BLOCK_SIZE * 2)
+        this.setDisplaySize(SLINGER_WIDTH, SLINGER_HEIGHT)
       } else if (this.x < this.minX) {
         this.setVelocityX(SLINGER_SPEED)
         this.setTexture('stache-slinger-1')
-        this.setDisplaySize(BLOCK_SIZE * 1.5, BLOCK_SIZE * 2)
+        this.setDisplaySize(SLINGER_WIDTH, SLINGER_HEIGHT)
       }
     }
   }
