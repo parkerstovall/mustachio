@@ -122,10 +122,10 @@ export class MobileControls {
       },
     )
 
-    // Jump (right side)
+    // Jump (above left+right)
     this.addButton(
       '▲',
-      'right: 2%; bottom: 20%;',
+      'left: 7.5%; bottom: 33%;',
       () => {
         this.jumpPending = true
       },
@@ -134,10 +134,10 @@ export class MobileControls {
       },
     )
 
-    // Fire (left of jump)
+    // Fire (right side, matches left+right height)
     this.addButton(
-      'FIRE',
-      'right: 13%; bottom: 20%;',
+      'F',
+      'right: 7.5%; bottom: 20%;',
       () => {
         this.firePending = true
       },
