@@ -52,7 +52,8 @@ export type LevelFunction = (
 export interface GameSceneData {
   levelKey?: LevelFunction
   previousLevels?: string[]
-  score?: number
+  playerBig?: boolean
+  playerFire?: boolean
 }
 
 export class GameScene extends Phaser.Scene {
@@ -66,6 +67,8 @@ export class GameScene extends Phaser.Scene {
   enemyProjectiles!: Phaser.Physics.Arcade.Group
   breakables!: Phaser.Physics.Arcade.StaticGroup
   fallingFloors!: Phaser.Physics.Arcade.Group
+
+  debug: boolean = false
 
   // Player
   player!: Mustachio
@@ -108,6 +111,7 @@ export class GameScene extends Phaser.Scene {
     this.fireBars = []
     this.hiddenBlocks = []
     this.isPaused = false
+    this.debug = this.game.config.physics?.arcade?.debug === true
 
     // Generate procedural textures
     this.generateProceduralTextures()
@@ -124,7 +128,15 @@ export class GameScene extends Phaser.Scene {
     this.fallingFloors = this.physics.add.group({ allowGravity: false })
 
     // Player
-    this.player = new Mustachio(this, BLOCK_SIZE * 4, BLOCK_SIZE * 13)
+    const isBig = data?.playerBig ?? false
+    const hasFire = data?.playerFire ?? false
+    this.player = new Mustachio(
+      this,
+      BLOCK_SIZE * 4,
+      BLOCK_SIZE * 13,
+      isBig,
+      hasFire,
+    )
 
     // Input
     this.cursors = this.input.keyboard!.createCursorKeys()
@@ -179,9 +191,9 @@ export class GameScene extends Phaser.Scene {
     this.setupCollisions()
 
     // Load level
-    if (data?.score) {
-      this.events.emit('addScore', data.score)
-    }
+    // if (data?.score) {
+    //   this.events.emit('addScore', data.score)
+    // }
     this.previousLevels = data?.previousLevels ?? []
     const level = data?.levelKey
     if (level) {
@@ -422,6 +434,9 @@ export class GameScene extends Phaser.Scene {
       undefined,
       this,
     )
+
+    // Enemies vs falling floors (shouldn't trigger, but should collide)
+    this.physics.add.collider(this.enemies, this.fallingFloors)
 
     // Player vs enemies
     this.physics.add.overlap(
@@ -747,16 +762,14 @@ export class GameScene extends Phaser.Scene {
     this.hiddenBlocks.push(block)
   }
 
-  loadLevel(
-    levelFunc: LevelFunction,
-    previousLevels: string[],
-    score?: number,
-  ) {
-    this.scene.restart({
+  loadLevel(levelFunc: LevelFunction, previousLevels: string[]) {
+    const data: GameSceneData = {
       levelKey: levelFunc,
       previousLevels,
-      score: score ?? 0,
-    } as GameSceneData)
+      playerBig: this.player.isBig,
+      playerFire: this.player.isFire,
+    }
+    this.scene.restart(data)
   }
 
   setupCamera(levelWidth: number) {

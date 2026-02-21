@@ -21,21 +21,19 @@ export class FireBar extends Phaser.GameObjects.Graphics {
     this.anchorX = anchorX
     this.anchorY = anchorY
 
+    // Position the Graphics object at the anchor so rotation works correctly
+    this.setPosition(anchorX, anchorY)
     this.setDepth(BELOW_PLAYER_DEPTH)
+
+    // Draw initial bar
+    this.drawBar()
 
     // Register with scene for manual hit detection
     scene.registerFireBar(this)
   }
 
-  updateRotation(delta: number) {
-    this.rotation_ += FIRE_BAR_ROTATION_SPEED * (delta / 1000)
-    this.rotation_ %= Math.PI * 2
-
+  private drawBar() {
     this.clear()
-    this.save()
-    this.translateCanvas(this.anchorX, this.anchorY)
-    this.rotation = this.rotation_ // Phaser handles rotation on the graphics object
-
     this.fillStyle(FIRE_COLOR)
     this.fillRect(
       -FIRE_BAR_WIDTH / 2,
@@ -43,8 +41,12 @@ export class FireBar extends Phaser.GameObjects.Graphics {
       FIRE_BAR_WIDTH,
       FIRE_BAR_HEIGHT,
     )
+  }
 
-    this.restore()
+  updateRotation(delta: number) {
+    this.rotation_ += FIRE_BAR_ROTATION_SPEED * (delta / 1000)
+    this.rotation_ %= Math.PI * 2
+    this.rotation = this.rotation_
   }
 
   hitDetection(playerX: number, playerY: number): boolean {

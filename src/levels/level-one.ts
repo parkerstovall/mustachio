@@ -19,6 +19,7 @@ import { FireCrossBlock } from '../objects/blocks/FireCrossBlock'
 import { FireBarBlock } from '../objects/blocks/FireBarBlock'
 import { StacheStreaker } from '../objects/enemies/StacheStreaker'
 import { Flag } from '../objects/set-pieces/Flag'
+import { StacheSlinger } from '../objects/enemies/StacheSlinger'
 
 export function levelOne(scene: GameScene, previousLevels: string[] = []) {
   sectionOne(scene)
@@ -240,6 +241,8 @@ function sectionSeven(scene: GameScene) {
   createBlockWall(scene, 189, 6, 1, 1, 'falling-floor')
   createBlockWall(scene, 193, 3, 1, 1, 'falling-floor')
   createBlockWall(scene, 194, 2, 1, 15, 'falling-floor')
+  new StacheSlinger(scene, BLOCK_SIZE * 175, BLOCK_SIZE * 0.5)
+  new StacheSlinger(scene, BLOCK_SIZE * 185, BLOCK_SIZE * 0.5)
 
   createBlockSquare(scene, 198, 7, 10, 6, 'falling-floor')
   createBlockWall(scene, 199, 8, 8, 4, 'coin')

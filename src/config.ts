@@ -6,6 +6,7 @@ import { UIScene } from './scenes/UIScene'
 
 export function createGameConfig(
   parent: string | HTMLElement,
+  debug: boolean = false,
 ): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
@@ -22,7 +23,7 @@ export function createGameConfig(
       default: 'arcade',
       arcade: {
         gravity: { x: 0, y: GRAVITY },
-        debug: true,
+        debug,
       },
     },
     scene: [GameScene, BackgroundScene, UIScene],

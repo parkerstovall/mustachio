@@ -1,11 +1,11 @@
 import Phaser from 'phaser'
 import { createGameConfig } from './config'
 
-export const startMustachio = (containerId: string) => {
+export const startMustachio = (containerId: string, debug: boolean = false) => {
   const container = document.getElementById(containerId)
   if (!container) {
     throw new Error(`Container with id "${containerId}" not found`)
   }
 
-  return new Phaser.Game(createGameConfig(container))
+  return new Phaser.Game(createGameConfig(container, debug))
 }

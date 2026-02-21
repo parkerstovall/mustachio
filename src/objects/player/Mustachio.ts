@@ -33,6 +33,7 @@ import {
 import type { GameScene } from '../../scenes/GameScene'
 import { StacheBall } from '../projectiles/StacheBall'
 import type { WarpPipe } from '../set-pieces/WarpPipe'
+import { Flag } from '../set-pieces/Flag'
 
 export class Mustachio extends Phaser.Physics.Arcade.Sprite {
   declare scene: GameScene
@@ -49,7 +50,13 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
   private warpPipe: WarpPipe | null = null
   private facingDirection: 'left' | 'right' | 'front' = 'front'
 
-  constructor(scene: GameScene, x: number, y: number) {
+  constructor(
+    scene: GameScene,
+    x: number,
+    y: number,
+    isBig: boolean,
+    isFire: boolean,
+  ) {
     super(scene, x, y, 'mustachio')
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -60,7 +67,11 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(false)
     this.setDepth(PLAYER_DEPTH)
 
-    this.changeFire(true)
+    if (isFire) {
+      this.changeFire(true, false)
+    } else if (isBig) {
+      this.changeSize(true, false)
+    }
   }
 
   updateTexture(dir: 'left' | 'right' | 'front') {
@@ -119,6 +130,12 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
   }
 
   playerHit() {
+    // Ignore if in debug mode
+    if (this.scene.debug) {
+      console.log('Player hit - ignoring due to debug mode')
+      return
+    }
+
     if (this.hitTimer !== null || this.scene.gameOver) return
 
     if (this.isFire) {
@@ -185,47 +202,51 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     })
   }
 
-  changeSize(big: boolean) {
+  changeSize(big: boolean, showAnimation = true) {
     if (this.isBig === big) return
     this.isBig = big
 
     const targetW = big ? PLAYER_BIG_WIDTH : PLAYER_SIZE
     const targetH = big ? PLAYER_BIG_HEIGHT : PLAYER_SIZE
 
-    const velocityY = this.body.velocity.y
-    this.setVelocityY(0) // Stop vertical movement during size change
-
     const newY = big
       ? this.y - (targetH - this.displayHeight)
       : this.y + (this.displayHeight - targetH)
 
-    this.scene.tweens.add({
-      targets: this,
-      displayWidth: targetW,
-      displayHeight: targetH,
-      y: newY,
-      duration: PLAYER_SIZE_CHANGE_DURATION,
+    if (showAnimation) {
+      const velocityY = this.body.velocity.y
+      this.setVelocityY(0) // Stop vertical movement during size change
+      this.scene.tweens.add({
+        targets: this,
+        displayWidth: targetW,
+        displayHeight: targetH,
+        y: newY,
+        duration: PLAYER_SIZE_CHANGE_DURATION,
 
-      onComplete: () => {
-        this.setVelocityY(velocityY) // Preserve vertical velocity after tween
-      },
-    })
+        onComplete: () => {
+          this.setVelocityY(velocityY) // Preserve vertical velocity after tween
+        },
+      })
+    } else {
+      this.setDisplaySize(targetW, targetH)
+      this.y = newY
+    }
 
     this.updateTexture(this.facingDirection)
   }
 
-  changeFire(fire: boolean) {
+  changeFire(fire: boolean, showAnimation = true) {
     if (this.isFire === fire) return
     this.isFire = fire
 
     if (fire && !this.isBig) {
-      this.changeSize(true)
+      this.changeSize(true, showAnimation)
     }
 
     this.updateTexture(this.facingDirection)
 
     // Flash animation for power-up
-    if (fire) {
+    if (fire && showAnimation) {
       this.scene.tweens.add({
         targets: this,
         alpha: PLAYER_POWERUP_FLASH_ALPHA,
@@ -251,11 +272,15 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
       x: targetX,
       duration: PLAYER_WIN_WALK_DURATION,
       onComplete: () => {
-        this.setTexture('mustachio')
-        this.setDisplaySize(PLAYER_SIZE, PLAYER_SIZE)
+        if (this.isFire) {
+          this.setTexture('mustachio-fire')
+        } else {
+          this.setTexture('mustachio')
+        }
+        this.setVelocity(0, 0)
         this.scene.time.delayedCall(PLAYER_WIN_DELAY, () => {
-          if ('closeDoor' in flag) {
-            ;(flag as unknown as { closeDoor: () => void }).closeDoor()
+          if (flag instanceof Flag) {
+            flag.closeDoor()
           }
           this.setVisible(false)
           this.scene.events.emit('win')
