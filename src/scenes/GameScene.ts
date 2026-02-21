@@ -130,7 +130,7 @@ export class GameScene extends Phaser.Scene {
     const hasFire = data?.playerFire ?? false
     this.player = new Mustachio(
       this,
-      BLOCK_SIZE * 74,
+      BLOCK_SIZE * 4,
       BLOCK_SIZE * 13,
       isBig,
       hasFire,
