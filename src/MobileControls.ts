@@ -51,10 +51,11 @@ export class MobileControls {
     positionCss: string,
     onDown: () => void,
     onUp: () => void,
+    ariaLabel?: string,
   ): void {
     const btn = document.createElement('div')
     btn.textContent = label
-    btn.setAttribute('aria-label', label)
+    btn.setAttribute('aria-label', ariaLabel ?? label)
     btn.style.cssText = BUTTON_BASE_STYLE + positionCss
 
     const signal = this.abortController.signal
@@ -110,22 +111,10 @@ export class MobileControls {
       },
     )
 
-    // Crouch (centred below left+right)
-    this.addButton(
-      '▼',
-      'left: 7.5%; bottom: 5%;',
-      () => {
-        this.down = true
-      },
-      () => {
-        this.down = false
-      },
-    )
-
-    // Jump (above left+right)
+    // Jump (right side, above fire)
     this.addButton(
       '▲',
-      'left: 7.5%; bottom: 33%;',
+      'right: 7.5%; bottom: 33%;',
       () => {
         this.jumpPending = true
       },
@@ -137,12 +126,25 @@ export class MobileControls {
     // Fire (right side, matches left+right height)
     this.addButton(
       'F',
-      'right: 7.5%; bottom: 20%;',
+      'right: 2%; bottom: 20%;',
       () => {
         this.firePending = true
       },
       () => {
         /* consumed on next frame */
+      },
+      'Fire',
+    )
+
+    // Crouch (right side, below fire)
+    this.addButton(
+      '▼',
+      'right: 7.5%; bottom: 5%;',
+      () => {
+        this.down = true
+      },
+      () => {
+        this.down = false
       },
     )
   }
