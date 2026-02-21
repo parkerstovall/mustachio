@@ -21,6 +21,6 @@ jobs:
     with:
       package_directory: '.'
       repo: 'parkerstovall/parker-stovall.com'
-      package_name: 'mustachio'
+      package_name: 'mustachio-game'
     secrets:
       repo_token: ${{ secrets.CROSS_REPO_TOKEN }}
