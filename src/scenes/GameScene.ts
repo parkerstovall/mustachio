@@ -35,6 +35,7 @@ import type { Enemy } from '../objects/enemies/Enemy'
 import type { FireBar } from '../objects/projectiles/FireBar'
 
 import type { ItemBlock } from '../objects/blocks/ItemBlock'
+import { MobileControls } from '../MobileControls'
 import { loadImages } from './_sceneHelpers/load-assets'
 import { Item } from '../objects/items/Item'
 import { levelOne } from '../levels/level-one'
@@ -93,6 +94,7 @@ export class GameScene extends Phaser.Scene {
   private fireBars: FireBar[] = []
   private hiddenBlocks: ItemBlock[] = []
   private isPaused = false
+  private mobileControls: MobileControls | null = null
 
   constructor() {
     super({ key: 'GameScene' })
@@ -177,6 +179,9 @@ export class GameScene extends Phaser.Scene {
     })
 
     // Restart handling is checked in update()
+
+    // Mobile controls (populated by startMustachio on touch devices)
+    this.mobileControls = this.game.registry.get('mobileControls') ?? null
 
     // Time up event from UI
     this.events.on('timeUp', () => {
@@ -587,11 +592,21 @@ export class GameScene extends Phaser.Scene {
   private handlePlayerInput() {
     if (this.player.ignoreUpdate) return
 
-    const left = this.cursors.left?.isDown || this.wasd.A.isDown
-    const right = this.cursors.right?.isDown || this.wasd.D.isDown
-    const down = this.cursors.down?.isDown || this.wasd.S.isDown
+    const mc = this.mobileControls
+
+    const left =
+      this.cursors.left?.isDown || this.wasd.A.isDown || (mc?.left ?? false)
+    const right =
+      this.cursors.right?.isDown || this.wasd.D.isDown || (mc?.right ?? false)
+    const down =
+      this.cursors.down?.isDown || this.wasd.S.isDown || (mc?.down ?? false)
     const sprint = this.shiftKey.isDown
-    const fire = Phaser.Input.Keyboard.JustDown(this.spaceKey)
+
+    // Consume mobile one-shot inputs before any early-returns alter control flow
+    const jumpMobile = mc?.consumeFlag('jumpPending') ?? false
+    const fireMobile = mc?.consumeFlag('firePending') ?? false
+
+    const fire = Phaser.Input.Keyboard.JustDown(this.spaceKey) || fireMobile
 
     const speed = sprint ? PLAYER_SPRINT_SPEED : PLAYER_WALK_SPEED
 
@@ -607,7 +622,8 @@ export class GameScene extends Phaser.Scene {
 
     if (
       Phaser.Input.Keyboard.JustDown(this.cursors.up!) ||
-      Phaser.Input.Keyboard.JustDown(this.wasd.W)
+      Phaser.Input.Keyboard.JustDown(this.wasd.W) ||
+      jumpMobile
     ) {
       this.player.jump()
     }
