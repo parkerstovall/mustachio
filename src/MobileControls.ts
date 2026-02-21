@@ -1,12 +1,12 @@
 const BUTTON_BASE_STYLE = `
   position: absolute;
-  width: 9%;
+  width: 11%;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  border: 3px solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.22);
+  border: 3px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   color: white;
   font-size: 2.5vw;
@@ -51,10 +51,11 @@ export class MobileControls {
     positionCss: string,
     onDown: () => void,
     onUp: () => void,
+    ariaLabel?: string,
   ): void {
     const btn = document.createElement('div')
     btn.textContent = label
-    btn.setAttribute('aria-label', label)
+    btn.setAttribute('aria-label', ariaLabel ?? label)
     btn.style.cssText = BUTTON_BASE_STYLE + positionCss
 
     const signal = this.abortController.signal
@@ -110,22 +111,10 @@ export class MobileControls {
       },
     )
 
-    // Crouch (centred below left+right)
-    this.addButton(
-      '▼',
-      'left: 7.5%; bottom: 5%;',
-      () => {
-        this.down = true
-      },
-      () => {
-        this.down = false
-      },
-    )
-
-    // Jump (right side)
+    // Jump (right side, above fire)
     this.addButton(
       '▲',
-      'right: 2%; bottom: 20%;',
+      'right: 7.5%; bottom: 33%;',
       () => {
         this.jumpPending = true
       },
@@ -134,15 +123,28 @@ export class MobileControls {
       },
     )
 
-    // Fire (left of jump)
+    // Fire (right side, matches left+right height)
     this.addButton(
-      'FIRE',
-      'right: 13%; bottom: 20%;',
+      'F',
+      'right: 2%; bottom: 20%;',
       () => {
         this.firePending = true
       },
       () => {
         /* consumed on next frame */
+      },
+      'Fire',
+    )
+
+    // Crouch (right side, below fire)
+    this.addButton(
+      '▼',
+      'right: 7.5%; bottom: 5%;',
+      () => {
+        this.down = true
+      },
+      () => {
+        this.down = false
       },
     )
   }
