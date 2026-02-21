@@ -90,7 +90,7 @@ export class MobileControls {
     // Left
     this.addButton(
       '◀',
-      'left: 2%; bottom: 20%;',
+      'left: 2%; bottom: 2%;',
       () => {
         this.left = true
       },
@@ -102,7 +102,7 @@ export class MobileControls {
     // Right
     this.addButton(
       '▶',
-      'left: 13%; bottom: 20%;',
+      'left: 14%; bottom: 2%;',
       () => {
         this.right = true
       },
@@ -111,10 +111,10 @@ export class MobileControls {
       },
     )
 
-    // Jump (right side, above fire)
+    // Jump (right side, far right)
     this.addButton(
       '▲',
-      'right: 7.5%; bottom: 33%;',
+      'right: 2%; bottom: 2%;',
       () => {
         this.jumpPending = true
       },
@@ -123,10 +123,10 @@ export class MobileControls {
       },
     )
 
-    // Fire (right side, matches left+right height)
+    // Fire (right side, middle)
     this.addButton(
       'F',
-      'right: 2%; bottom: 20%;',
+      'right: 14%; bottom: 2%;',
       () => {
         this.firePending = true
       },
@@ -136,10 +136,10 @@ export class MobileControls {
       'Fire',
     )
 
-    // Crouch (right side, below fire)
+    // Crouch (right side, leftmost of right group)
     this.addButton(
       '▼',
-      'right: 7.5%; bottom: 5%;',
+      'right: 26%; bottom: 2%;',
       () => {
         this.down = true
       },
