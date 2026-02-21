@@ -14,13 +14,13 @@ jobs:
     secrets:
       npm_token: ${{ secrets.NPM_AUTH_TOKEN }}
 
-  update-pac-man-repo:
+  update-main-app:
     if: ${{ needs.publish-package.outputs.created_tag == 'true' }}
     uses: 'parkerstovall/workflows/.github/workflows/Push_PackageUpdate.yaml@main'
     needs: publish-package
     with:
       package_directory: '.'
-      repo: 'parkerstovall/mustachio'
+      repo: 'parkerstovall/parker-stovall.com'
       package_name: 'mustachio'
     secrets:
       repo_token: ${{ secrets.CROSS_REPO_TOKEN }}
