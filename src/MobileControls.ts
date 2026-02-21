@@ -1,12 +1,12 @@
 const BUTTON_BASE_STYLE = `
   position: absolute;
-  width: 9%;
+  width: 11%;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  border: 3px solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.22);
+  border: 3px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   color: white;
   font-size: 2.5vw;
