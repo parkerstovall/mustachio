@@ -91,6 +91,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
   jump() {
     if (this.numJumps >= MAX_JUMPS) return
     this.setVelocityY(PLAYER_JUMP_VELOCITY)
+    this.setWarpPipe(null)
     this.numJumps++
   }
 
@@ -257,12 +258,15 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  winGame(flag: Phaser.Physics.Arcade.Sprite) {
+  winGame(flag: Flag) {
     this.ignoreUpdate = true
     this.scene.gameOver = true
     this.scene.hasWon = true
-    this.setTexture('mustachio-right')
-    this.setDisplaySize(PLAYER_SIZE, PLAYER_SIZE)
+    if (this.isFire) {
+      this.setTexture('mustachio-fire-right')
+    } else {
+      this.setTexture('mustachio-right')
+    }
 
     const targetX = flag.x + flag.displayWidth / 2 - PLAYER_SIZE / 1.5
 
@@ -279,9 +283,7 @@ export class Mustachio extends Phaser.Physics.Arcade.Sprite {
         }
         this.setVelocity(0, 0)
         this.scene.time.delayedCall(PLAYER_WIN_DELAY, () => {
-          if (flag instanceof Flag) {
-            flag.closeDoor()
-          }
+          flag.closeDoor()
           this.setVisible(false)
           this.scene.events.emit('win')
         })

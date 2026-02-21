@@ -63,6 +63,11 @@ export class UIScene extends Phaser.Scene {
       callbackScope: this,
     })
 
+    this.registerGameEvents()
+  }
+
+  /** Register listeners on GameScene events. Called on initial create and after restarts. */
+  registerGameEvents() {
     const gameScene = this.scene.get('GameScene')
 
     gameScene.events.on('addScore', (points: number) => {

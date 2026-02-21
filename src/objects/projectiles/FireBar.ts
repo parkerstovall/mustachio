@@ -49,22 +49,42 @@ export class FireBar extends Phaser.GameObjects.Graphics {
     this.rotation = this.rotation_
   }
 
-  hitDetection(playerX: number, playerY: number): boolean {
-    const dx = playerX - this.anchorX
-    const dy = playerY - this.anchorY
+  hitDetection(
+    playerX: number,
+    playerY: number,
+    playerW: number,
+    playerH: number,
+  ): boolean {
+    // Check if any corner of the player bounding box overlaps the rotated bar
+    const corners = [
+      { x: playerX, y: playerY }, // top-left
+      { x: playerX + playerW, y: playerY }, // top-right
+      { x: playerX, y: playerY + playerH }, // bottom-left
+      { x: playerX + playerW, y: playerY + playerH }, // bottom-right
+      { x: playerX + playerW / 2, y: playerY + playerH / 2 }, // center
+    ]
 
     const sin = Math.sin(-this.rotation_)
     const cos = Math.cos(-this.rotation_)
-
-    const localX = dx * cos - dy * sin
-    const localY = dx * sin + dy * cos
-
     const halfW = FIRE_BAR_WIDTH / 2
-    return (
-      localX >= -halfW &&
-      localX <= halfW &&
-      localY >= -FIRE_BAR_HEIGHT &&
-      localY <= 0
-    )
+
+    for (const corner of corners) {
+      const dx = corner.x - this.anchorX
+      const dy = corner.y - this.anchorY
+
+      const localX = dx * cos - dy * sin
+      const localY = dx * sin + dy * cos
+
+      if (
+        localX >= -halfW &&
+        localX <= halfW &&
+        localY >= -FIRE_BAR_HEIGHT &&
+        localY <= 0
+      ) {
+        return true
+      }
+    }
+
+    return false
   }
 }

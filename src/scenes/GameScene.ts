@@ -26,9 +26,6 @@ import {
   FALLING_FLOOR_STROKE_COLOR,
   STACHE_BALL_COLOR,
   BRICK_DEBRIS_COLOR,
-  LASER_FILL_COLOR,
-  LASER_WIDTH,
-  LASER_TEXTURE_HEIGHT,
   BALL_CANVAS_SIZE,
   BALL_ARC_CENTER,
   BALL_ARC_RADIUS,
@@ -43,6 +40,7 @@ import { Item } from '../objects/items/Item'
 import { levelOne } from '../levels/level-one'
 import { StacheSeed } from '../objects/enemies/StacheSeed'
 import { FallingFloor } from '../objects/blocks/FallingFloor'
+import type { UIScene } from './UIScene'
 
 export type LevelFunction = (
   scene: GameScene,
@@ -132,7 +130,7 @@ export class GameScene extends Phaser.Scene {
     const hasFire = data?.playerFire ?? false
     this.player = new Mustachio(
       this,
-      BLOCK_SIZE * 4,
+      BLOCK_SIZE * 74,
       BLOCK_SIZE * 13,
       isBig,
       hasFire,
@@ -191,9 +189,6 @@ export class GameScene extends Phaser.Scene {
     this.setupCollisions()
 
     // Load level
-    // if (data?.score) {
-    //   this.events.emit('addScore', data.score)
-    // }
     this.previousLevels = data?.previousLevels ?? []
     const level = data?.levelKey
     if (level) {
@@ -212,6 +207,12 @@ export class GameScene extends Phaser.Scene {
     }
     this.scene.sendToBack('BackgroundScene')
     this.scene.bringToTop('UIScene')
+
+    // Re-register UIScene event listeners (they are cleared on scene restart)
+    const uiScene = this.scene.get('UIScene') as UIScene
+    if (uiScene) {
+      uiScene.registerGameEvents()
+    }
   }
 
   private generateProceduralTextures() {
@@ -397,19 +398,6 @@ export class GameScene extends Phaser.Scene {
       bdctx.fill()
       bdCanvas.refresh()
     }
-
-    // Laser texture (blue rect)
-    if (!this.textures.exists('laser')) {
-      const lCanvas = this.textures.createCanvas(
-        'laser',
-        LASER_WIDTH,
-        LASER_TEXTURE_HEIGHT,
-      )!
-      const lctx = lCanvas.context
-      lctx.fillStyle = LASER_FILL_COLOR
-      lctx.fillRect(0, 0, LASER_WIDTH, LASER_TEXTURE_HEIGHT)
-      lCanvas.refresh()
-    }
   }
 
   private setupCollisions() {
@@ -543,7 +531,6 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.isPaused) return
 
-    // Player movement
     this.handlePlayerInput()
 
     // Check hidden blocks — player hitting from below
@@ -583,7 +570,14 @@ export class GameScene extends Phaser.Scene {
     for (const fireBar of this.fireBars) {
       if (fireBar.active) {
         fireBar.updateRotation(delta)
-        if (fireBar.hitDetection(this.player.x, this.player.y)) {
+        if (
+          fireBar.hitDetection(
+            this.player.x,
+            this.player.y,
+            this.player.displayWidth,
+            this.player.displayHeight,
+          )
+        ) {
           this.player.playerHit()
         }
       }

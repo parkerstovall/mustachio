@@ -7,6 +7,7 @@ export interface WarpPipeOptions extends PipeOptions {
 
 export class WarpPipe extends Pipe {
   declare scene: GameScene
+  declare body: Phaser.Physics.Arcade.Body
   private readonly setNewLevel: LevelFunction
 
   constructor(scene: GameScene, options: WarpPipeOptions) {
@@ -16,7 +17,9 @@ export class WarpPipe extends Pipe {
 
     // Set up overlap detection for crouching player
     scene.physics.add.collider(scene.player, this, () => {
-      scene.player.setWarpPipe(this)
+      if (scene.player.body.blocked.down && this.body.touching.up) {
+        scene.player.setWarpPipe(this)
+      }
     })
   }
 

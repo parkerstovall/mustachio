@@ -50,6 +50,7 @@ function sectionOne(scene: GameScene) {
   // First barrier
   createBlockWall(scene, 0, 0, 1, 17, 'wall')
   createBlockWall(scene, 1, 6, 1, 11, 'coin')
+  new StacheSlinger(scene, BLOCK_SIZE * 20, BLOCK_SIZE * 0.5)
 
   new ItemBlock(scene, BLOCK_SIZE * 6, BLOCK_SIZE * 14, false, 'coin')
   new Brick(scene, BLOCK_SIZE * 7, BLOCK_SIZE * 14)

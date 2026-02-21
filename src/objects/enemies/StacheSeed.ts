@@ -1,4 +1,3 @@
-import Phaser from 'phaser'
 import {
   BLOCK_SIZE,
   STACHE_SEED_SPEED,

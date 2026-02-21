@@ -54,9 +54,9 @@ export class BackgroundScene extends Phaser.Scene {
     }
   }
 
-  update() {
+  update(_time: number, delta: number) {
     for (const cloud of this.clouds) {
-      cloud.graphic.x += cloud.speed
+      cloud.graphic.x += cloud.speed * (delta / 1000)
       if (cloud.graphic.x > GAME_WIDTH + BLOCK_SIZE * 2) {
         cloud.graphic.x = -BLOCK_SIZE * 3
         cloud.graphic.y =

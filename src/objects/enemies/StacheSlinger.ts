@@ -13,7 +13,6 @@ export class StacheSlinger extends Enemy {
   readonly pointValue = 1250
   private readonly maxX: number
   private readonly minX: number
-  private totalDistance = 0
   private shotTimer: Phaser.Time.TimerEvent | null = null
 
   constructor(scene: GameScene, x: number, y: number) {
@@ -48,8 +47,6 @@ export class StacheSlinger extends Enemy {
     super.preUpdate(time, delta)
 
     if (!this.isDead) {
-      this.totalDistance += this.body.velocity.x * (delta / 1000)
-
       if (this.x > this.maxX) {
         this.setVelocityX(-SLINGER_SPEED)
         this.setTexture('stache-slinger-2')

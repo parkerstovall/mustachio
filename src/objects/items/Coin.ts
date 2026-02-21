@@ -23,7 +23,6 @@ export class Coin extends Item {
       })
     } else {
       // Static collectible on ground
-      scene.physics.add.existing(this)
       scene.items.add(this)
       this.body.setAllowGravity(false)
       this.body.setImmovable(true)
