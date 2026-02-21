@@ -1,75 +1,40 @@
-import { BLOCK_SIZE } from "../../shared/constants";
-import type { GameContext } from "../../shared/game-context";
-import { direction } from "../../shared/types";
-import { FallingFloor } from "../../classes/game-objects/set-pieces/obstacles/blocks/falling-floor";
-import { FireCrossBlock } from "../../classes/game-objects/set-pieces/obstacles/blocks/fire-cross-block";
-import { StacheCannon } from "../../classes/game-objects/set-pieces/obstacles/blocks/stache-cannon";
-import { Floor } from "../../classes/game-objects/set-pieces/obstacles/floor";
+import { BLOCK_SIZE } from '../../constants'
+import type { GameScene } from '../../scenes/GameScene'
+import { Direction } from '../../objects/enemies/StacheShot'
+import { FallingFloor } from '../../objects/blocks/FallingFloor'
+import { FireCrossBlock } from '../../objects/blocks/FireCrossBlock'
+import { StacheCannon } from '../../objects/blocks/StacheCannon'
+import { Floor } from '../../objects/set-pieces/Floor'
 
-export function testLevelCannonAndCross(gameContext: GameContext) {
-  gameContext.clearLevel();
+export function testLevelCannonAndCross(scene: GameScene) {
+  new Floor(scene, {
+    x: 0,
+    y: BLOCK_SIZE * 17,
+    width: BLOCK_SIZE * 13,
+    height: BLOCK_SIZE,
+  })
 
-  gameContext.addGameObject(
-    new Floor(gameContext, {
-      x: 0,
-      y: BLOCK_SIZE * 17,
-      width: BLOCK_SIZE * 13,
-      height: BLOCK_SIZE,
-    }),
-  );
+  new FallingFloor(scene, BLOCK_SIZE * 14, BLOCK_SIZE * 17)
 
-  gameContext.addGameObject(
-    new FallingFloor(gameContext, BLOCK_SIZE * 14, BLOCK_SIZE * 17),
-  );
+  new Floor(scene, {
+    x: BLOCK_SIZE * 15,
+    y: BLOCK_SIZE * 17,
+    width: BLOCK_SIZE * 17,
+    height: BLOCK_SIZE,
+  })
 
-  gameContext.addGameObject(
-    new Floor(gameContext, {
-      x: BLOCK_SIZE * 15,
-      y: BLOCK_SIZE * 17,
-      width: BLOCK_SIZE * 17,
-      height: BLOCK_SIZE,
-    }),
-  );
+  new StacheCannon(scene, BLOCK_SIZE * 16, BLOCK_SIZE * 15, Direction.RIGHT)
 
-  // gameContext.addGameObject(
-  //   new StacheCannon(
-  //     gameContext,
-  //     BLOCK_SIZE * 16,
-  //     BLOCK_SIZE * 16,
-  //     direction.LEFT,
-  //   ),
-  // )
+  new StacheCannon(scene, BLOCK_SIZE * 16, BLOCK_SIZE * 14, Direction.UP)
 
-  gameContext.addGameObject(
-    new StacheCannon(
-      gameContext,
-      BLOCK_SIZE * 16,
-      BLOCK_SIZE * 15,
-      direction.RIGHT,
-    ),
-  );
+  new StacheCannon(scene, BLOCK_SIZE * 15, 0, Direction.DOWN)
 
-  gameContext.addGameObject(
-    new StacheCannon(
-      gameContext,
-      BLOCK_SIZE * 16,
-      BLOCK_SIZE * 14,
-      direction.UP,
-    ),
-  );
+  new FireCrossBlock(scene, BLOCK_SIZE * 8, BLOCK_SIZE * 12, [
+    Direction.UP,
+    Direction.DOWN,
+    Direction.LEFT,
+    Direction.RIGHT,
+  ])
 
-  gameContext.addGameObject(
-    new StacheCannon(gameContext, BLOCK_SIZE * 15, 0, direction.DOWN),
-  );
-
-  gameContext.addGameObject(
-    new FireCrossBlock(gameContext, BLOCK_SIZE * 8, BLOCK_SIZE * 12, [
-      direction.UP,
-      direction.DOWN,
-      direction.LEFT,
-      direction.RIGHT,
-    ]),
-  );
-
-  gameContext.startMainLoop();
+  scene.setupCamera(BLOCK_SIZE * 32)
 }

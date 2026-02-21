@@ -1,0 +1,3 @@
+export const BRICK_SCORE = 100
+export const FALLING_FLOOR_PRE_FALL_DELAY = 250
+export const FALLING_FLOOR_FALL_DURATION = 850

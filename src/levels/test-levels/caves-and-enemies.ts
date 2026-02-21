@@ -1,73 +1,54 @@
-import { BLOCK_SIZE } from "../../shared/constants";
-import type { GameContext } from "../../shared/game-context";
-import { StacheSlinger } from "../../classes/game-objects/point-objects/enemies/stache-slinger";
-import { StacheStreaker } from "../../classes/game-objects/point-objects/enemies/stache-streaker";
-import { Floor } from "../../classes/game-objects/set-pieces/obstacles/floor";
-import { Pipe } from "../../classes/game-objects/set-pieces/obstacles/pipe";
-import { WarpPipe } from "../../classes/game-objects/set-pieces/obstacles/warp-pipe";
-import { caveOne } from "../caves/cave-one";
+import { BLOCK_SIZE } from '../../constants'
+import type { GameScene } from '../../scenes/GameScene'
+import { StacheSlinger } from '../../objects/enemies/StacheSlinger'
+import { StacheStreaker } from '../../objects/enemies/StacheStreaker'
+import { Floor } from '../../objects/set-pieces/Floor'
+import { Pipe } from '../../objects/set-pieces/Pipe'
+import { WarpPipe } from '../../objects/set-pieces/WarpPipe'
+import { caveOne } from '../caves/cave-one'
 
 export function testLevelCaveAndEnemies(
-  gameContext: GameContext,
+  scene: GameScene,
   previousLevels: string[] = [],
 ) {
-  gameContext.clearLevel();
-
-  if (previousLevels.includes("caveOne")) {
-    gameContext.setPlayerLocation(BLOCK_SIZE * 18.5, BLOCK_SIZE * 2.5);
+  if (previousLevels.includes('caveOne')) {
+    scene.setPlayerLocation(BLOCK_SIZE * 18.5, BLOCK_SIZE * 2.5)
   }
 
-  gameContext.addGameObject(
-    new Floor(gameContext, {
-      x: 0,
-      y: BLOCK_SIZE * 17,
-      width: BLOCK_SIZE * 32,
-      height: BLOCK_SIZE,
-    }),
-  );
+  new Floor(scene, {
+    x: 0,
+    y: BLOCK_SIZE * 17,
+    width: BLOCK_SIZE * 32,
+    height: BLOCK_SIZE,
+  })
 
-  // The game canvas is 32 blocks wide
-  // and 18 blocks tall
+  const touchingFloor = BLOCK_SIZE * 16
 
-  const touchingFloor = BLOCK_SIZE * 16;
-
-  let pipe: Pipe;
-  if (previousLevels.includes("caveOne")) {
-    pipe = new Pipe(gameContext, {
+  if (previousLevels.includes('caveOne')) {
+    new Pipe(scene, {
       x: BLOCK_SIZE * 10,
       y: touchingFloor,
       hasStacheSeed: true,
-    });
+    })
   } else {
-    pipe = new WarpPipe(gameContext, {
+    new WarpPipe(scene, {
       x: BLOCK_SIZE * 10,
       y: touchingFloor,
       hasStacheSeed: true,
-      setNewLevel: (gc) => caveOne(gc, [...previousLevels, "testLevelTwo"]),
-    });
+      setNewLevel: (gc, prev) => caveOne(gc, [...(prev ?? []), 'testLevelTwo']),
+    })
   }
 
-  gameContext.addGameObject(pipe);
+  new Pipe(scene, {
+    x: BLOCK_SIZE * 12,
+    y: touchingFloor,
+    hasStacheSeed: true,
+  })
 
-  gameContext.addGameObject(
-    (pipe = new Pipe(gameContext, {
-      x: BLOCK_SIZE * 12,
-      y: touchingFloor,
-      hasStacheSeed: true,
-    })),
-  );
+  new Pipe(scene, { x: BLOCK_SIZE * 18, y: 0 })
 
-  gameContext.addGameObject(
-    new Pipe(gameContext, { x: BLOCK_SIZE * 18, y: 0 }),
-  );
+  new StacheSlinger(scene, BLOCK_SIZE * 5, BLOCK_SIZE * 2)
+  new StacheStreaker(scene, BLOCK_SIZE * 10, BLOCK_SIZE * 2)
 
-  gameContext.addGameObject(
-    new StacheSlinger(gameContext, BLOCK_SIZE * 5, BLOCK_SIZE * 2),
-  );
-
-  gameContext.addGameObject(
-    new StacheStreaker(gameContext, BLOCK_SIZE * 10, BLOCK_SIZE * 2),
-  );
-
-  gameContext.startMainLoop();
+  scene.setupCamera(BLOCK_SIZE * 32)
 }

@@ -1,6 +1,11 @@
-import { levelOne } from "./levels/level-one";
-import { MustachioGameContext } from "./mustachi-game-context";
+import Phaser from 'phaser'
+import { createGameConfig } from './config'
 
-export const startMustachio = (containerId: string) => {
-  new MustachioGameContext(containerId).restart(levelOne);
-};
+export const startMustachio = (containerId: string, debug: boolean = false) => {
+  const container = document.getElementById(containerId)
+  if (!container) {
+    throw new Error(`Container with id "${containerId}" not found`)
+  }
+
+  return new Phaser.Game(createGameConfig(container, debug))
+}
